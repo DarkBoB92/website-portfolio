@@ -265,3 +265,189 @@ nav {
     transform: rotate(-45deg) translate(5px, -5px);
   }
 }
+/* ======= Portfolio Grid ======= */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto; /* center the grid */
+  justify-items: center;
+}
+
+/* ======= Project Cards ======= */
+.project-card {
+  background-color: #ffffff;
+  width: 250px;      /* fixed width for a more “square” look */
+  height: 350px;     /* adjust as needed to fit your content */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: space-between; 
+  text-align: center;
+  padding: 16px;
+  transition: transform 0.3s;
+  position: relative;
+}
+
+.project-card img {
+  width: 100%;
+  height: 140px; /* keep a consistent image size */
+  object-fit: cover; 
+  border-radius: 8px;
+}
+
+.project-card h3 {
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+.project-card p {
+  font-size: 0.9em;
+  line-height: 1.2em;
+  margin-bottom: 10px;
+}
+
+.project-card:hover {
+  transform: scale(1.2);
+}
+
+/* ======= Modal Styles ======= */
+.modal {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100vw; 
+  height: 100vh; 
+  display: none; 
+  justify-content: center; 
+  align-items: center; 
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* on top of everything */
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  max-width: 800px;
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Media container inside modal remains the same styling */
+.media-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap; 
+}
+
+.potato-image, .reign-image {
+  max-width: 25%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .project-card {
+    width: 200px;
+    height: auto;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+}
+
+/* Hover Effect */
+.project-card:hover {
+  transform: scale(1.2);
+}
+
+/* Modal Overlay */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 999; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  max-width: 800px;
+  border-radius: 8px;
+  position: relative; /* for the close button */
+}
+
+/* Close Button */
+.close {
+  font-size: 1.5rem;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #666;
+}
+/* Media container in modal */
+.modal-content .media-container {
+  margin-top: 15px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; 
+  justify-content: center;
+}
+
+.modal-content .media-container img {
+  max-width: 250px;
+  border-radius: 8px;
+}
+
+.modal-content .media-container iframe {
+  border-radius: 8px;
+}
+
+/* Responsive Sizing */
+@media (max-width: 768px) {
+  .project-card {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .project-card {
+    width: 80%;
+    height: auto;
+  }
+  .modal-content {
+    width: 90%;
+    margin: 10% auto;
+  }
+}
