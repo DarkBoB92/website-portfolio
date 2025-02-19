@@ -271,7 +271,7 @@ nav {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
   max-width: 1200px;
-  margin: 0 auto; /* center the grid */
+  margin: 30px ; /* center the grid */
   justify-items: center;
 }
 
@@ -450,4 +450,79 @@ nav {
     width: 90%;
     margin: 10% auto;
   }
+}
+/* Home Section Container */
+#home {
+  padding: 60px 20px; /* Adjust as needed */
+  background: #f4f4f4; 
+}
+
+/* Flex Layout for the Home section */
+.home-container {
+  display: flex;
+  align-items: center;       /* Vertically center content */
+  justify-content: center;   /* Horizontally center, or use space-between if you prefer */
+  max-width: 1200px;
+  margin: 0 auto;            /* Center the container horizontally */
+  gap: 40px;                 /* Space between columns */
+}
+
+/* Left side styling */
+.left-side {
+  flex: 1; /* This will let it expand/shrink as needed */
+  text-align: left; /* Align text to the left */
+}
+
+/* Right side styling */
+.right-side {
+  flex: 1; 
+  display: flex;
+  justify-content: center;  /* Center video placeholder horizontally */
+  align-items: center;      /* Center video placeholder vertically */
+}
+
+/* Profile photo styling */
+.profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: block;
+  border: 4px solid #333;
+  object-fit: cover;
+  margin-bottom: 20px; /* Space between photo and heading */
+}
+
+/* Video placeholder box */
+.video-placeholder {
+  width: 100%;
+  max-width: 500px; /* A max width for the video container */
+  height: 280px;    /* Approx. 16:9 ratio if you like */
+  background-color: #ccc; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .left-side, .right-side {
+    flex: unset;
+    width: 100%;
+    text-align: center; /* Center text on smaller screens */
+  }
+
+  .video-placeholder {
+    height: 200px; /* Slightly smaller placeholder on mobile */
+    max-width: 100%;
+  }
+}
+.aboutCSS{
+  margin-right: 200px;
+  margin-left: 200px;
 }
