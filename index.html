@@ -1,453 +1,158 @@
-/* Reset and basic styling */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roberto Scialpi | Game Developer Portfolio</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    section {
+      scroll-margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
 
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background: linear-gradient(to right, #e6e6e6, #f9f9f9);
-  padding-top: 60px; 
-}
+  <!-- Navigation -->
+<nav>
+  <div class="nav-container">
+    <div class="logo">
+      <a href="#home">Roberto Scialpi</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <!-- Hamburger Menu Icon -->
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+  
+  <!-- Home Section -->
+<section id="home">
+  <img src="https://i.imgur.com/hLiID8P.jpeg" alt="Photo of Roberto Scialpi" class="profile-photo">
+  <h1>Roberto Scialpi</h1>
+  <p>Game Developer specializing in Game Programming</p>
+</section>
 
-/* Fixed Navigation Styling */
-nav {
-  position: fixed;           /* Fixes the nav bar at the top */
-  top: 0;                    /* Aligns it to the top of the viewport */
-  width: 100%;               /* Ensures it spans the full width of the viewport */
-  background: #333;          /* Background color for the nav bar */
-  color: #fff;
-  padding: 15px 0;
-  text-align: center;
-  z-index: 1000;             /* Keeps it on top of other elements */
-}
+  <!-- About Section -->
+  <section id="about">
+    <h2>About Me</h2>
+    <p>As a versatile Game Design and Development student at the University of Greenwich with an anticipated First-Class degree, I bring a unique combination of technical expertise, creative problem-solving, and cross-functional experience to any project. I hold a Unity Developer Certification and possess strong proficiency in programming languages like C++, C#, and Java, alongside experience with Unity and Unreal game engines. My background includes both IT troubleshooting and technical support, where I developed strong diagnostic and customer-focused communication skills, as well as extensive experience in team collaboration and time management. My hands-on work on game projects and awards for excellence at university further demonstrate my commitment to producing high-quality, innovative solutions. Fluent in both English and Italian, with proficiency in German and Spanish, I am ready to leverage my skills to make a meaningful impact in a game development or tech-focused role.
+    </p>
+  </section>
 
-nav ul {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-}
+<!-- Portfolio Section -->
+<section id="portfolio">
+  <h2>Portfolio</h2>
+  
+  <!-- Grid of Project Cards -->
+  <div class="project-grid">
+    <!-- Project 1 Card -->
+    <div class="project-card" onclick="openModal('modal1')">
+      <img src="https://i.imgur.com/oBk00YZ.jpeg" alt="Potato Bonanza Extravaganza screenshot">
+      <h3>Potato Bonanza Extravaganza</h3>
+      <p>11-week prototype focusing on version control, QA, and coding contributions.</p>
+    </div>
 
-nav ul li {
-  margin: 0 20px;
-}
+    <!-- Project 2 Card -->
+    <div class="project-card" onclick="openModal('modal2')">
+      <img src="https://i.imgur.com/eXxRu0n.jpeg" alt="Reign of Elements screenshot">
+      <h3>Reign of Elements</h3>
+      <p>2-week prototype highlighting OOP, AI behaviors, and puzzle mechanics.</p>
+    </div>
+  </div> <!-- .project-grid end -->
 
-nav ul li a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s;
-}
 
-nav ul li a:hover {
-  color: #f9a825;
-}
+  <!-- ======= Modals ======= -->
+  <!-- Project 1 Modal -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <!-- Close Button -->
+      <span class="close" onclick="closeModal('modal1')">&times;</span>
 
-section {
-  padding: 40px;
-  text-align: center;
-}
+      <h3>Potato Bonanza Extravaganza</h3>
+      <p>11-week prototype focusing on version control, quality assurance, and coding contributions.</p>
+      <ul>
+        <li>Created the power-ups system, shooting system, and input system.</li>
+        <li>Collaborated on gameplay and quality assurance.</li>
+        <li>Nominated one of the Best Group Game Projects of the year during the University of Greenwich SharkExpo 2023/24.</li>
+      </ul>
+      <div class="media-container">
+        <img 
+          src="https://i.imgur.com/oBk00YZ.jpeg" 
+          alt="Potato Bonanza Extravaganza screenshot" 
+          class="potato-image"
+        >
+        <iframe 
+          width="500" 
+          height="315"
+          src="https://www.youtube.com/embed/iAF-vie60YI?si=Xu4IIXEgFULcNLXm" 
+          title="YouTube video player" 
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div> <!-- End of #modal-project1 -->
 
-#home {
-  background: #f4f4f4;
-  padding: 80px;
-}
+  <!-- Project 2 Modal -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <!-- Close Button -->
+      <span class="close" onclick="closeModal('modal2')">&times;</span>
 
-/* Profile photo styling */
-.profile-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin: 20px auto;
-  display: block;
-  border: 4px solid #333;
-  object-fit: cover;
-}
+      <h3>Reign of Elements - Legacy Of The Dragon Mages</h3>
+      <p>2-week prototype showcasing Object-Oriented Programming techniques with custom sprites and simple AI behaviors.</p>
+      <ul>
+        <li>Developed code for AI behavior and character control.</li>
+        <li>Integrated puzzle mechanics and basic combat features.</li>
+        <li>Nominated one of the Best Individual Game Projects of the year during the University of Greenwich SharkExpo 2023/24.</li>
+      </ul>
+      <div class="media-container">
+        <img 
+          src="https://i.imgur.com/eXxRu0n.jpeg" 
+          alt="Reign of Elements screenshot"
+          class="reign-image"
+        >
+        <iframe 
+          width="560" 
+          height="315"
+          src="https://www.youtube.com/embed/RRdK1kN6s34?si=S8qqJzB5Za_YoYZa" 
+          title="YouTube video player" 
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div> <!-- End of #modal-project2 -->
+</section>
 
-#portfolio .project {
-  background: #ffffff;
-  margin: 20px auto;
-  padding: 20px;
-  width: 80%;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
+  <!-- Contact Section -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>If you’d like to get in touch, please email me at: <a href="mailto:roberto.scialpi.92@gmail.com">roberto.scialpi.92@gmail.com</a></p>
+    <p>Or connect on <a href="https://www.linkedin.com/in/roberto-scialpi/">LinkedIn</a>
+  </section>
 
-.project:hover {
-  transform: scale(1.05);
-}
+  <!-- Footer -->
+  <footer>
+    <p>&copy; Roberto Scialpi</p>
+  </footer>
 
-button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border-radius: 5px;
-}
-
-button:hover {
-  background-color: #f9a825;
-}
-
-.more-info {
-  display: none;
-  margin-top: 10px;
-}
-
-footer {
-  padding: 20px;
-  background: #333;
-  color: #fff;
-  text-align: center;
-  font-size: 0.9em;
-}
-
-.media-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
-  flex-wrap: wrap; /* Allows stacking on smaller screens */
-}
-
-/* Project Image Styling */
-.potato-image {
-  max-width: 25%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 15px;
-}
-
-.potato-video {
-  max-width: 100%;
-  height: 300px;
-  border-radius: 8px;
-}
-
-.reign-image {
-  max-width: 25%;
-  height: 312px;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 8px;
-  margin-top: 15px;
-  overflow: hidden;
-}
-
-.reign-video {
-  max-width: 100%;
-  height: 300px;
-  border-radius: 8px;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  nav ul {
-    flex-direction: column;
-  }
-  #portfolio .project {
-    width: 90%;
-  }
-}
-
-@media (max-width: 480px) {
-  nav ul li {
-    margin: 10px 0;
-  }
-  h1, h2, h3 {
-    font-size: 1.5em;
-  }
-  p, ul, li {
-    font-size: 1em;
-  }
-}
-/* Navigation Styling */
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: #333;
-  color: #fff;
-  padding: 15px 0;
-  z-index: 1000;
-}
-
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.logo a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-
-.nav-links {
-  display: flex;
-  list-style: none;
-}
-
-.nav-links li {
-  margin: 0 15px;
-}
-
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.nav-links a:hover {
-  color: #f9a825;
-}
-
-/* Hamburger Menu */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.hamburger span {
-  background: white;
-  height: 4px;
-  width: 30px;
-  margin: 4px 0;
-  transition: all 0.3s ease;
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background: #333;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 100%;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  /* Animate Hamburger Icon */
-  .hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-  }
-
-  .hamburger.active span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-  }
-}
-/* ======= Portfolio Grid ======= */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto; /* center the grid */
-  justify-items: center;
-}
-
-/* ======= Project Cards ======= */
-.project-card {
-  background-color: #ffffff;
-  width: 250px;      /* fixed width for a more “square” look */
-  height: 350px;     /* adjust as needed to fit your content */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: space-between; 
-  text-align: center;
-  padding: 16px;
-  transition: transform 0.3s;
-  position: relative;
-}
-
-.project-card img {
-  width: 100%;
-  height: 140px; /* keep a consistent image size */
-  object-fit: cover; 
-  border-radius: 8px;
-}
-
-.project-card h3 {
-  margin: 10px 0;
-  font-size: 1.1em;
-}
-
-.project-card p {
-  font-size: 0.9em;
-  line-height: 1.2em;
-  margin-bottom: 10px;
-}
-
-.project-card:hover {
-  transform: scale(1.2);
-}
-
-/* ======= Modal Styles ======= */
-.modal {
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100vw; 
-  height: 100vh; 
-  display: none; 
-  justify-content: center; 
-  align-items: center; 
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999; /* on top of everything */
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background: #fff;
-  max-width: 800px;
-  width: 90%;
-  margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  position: relative;
-}
-
-/* Media container inside modal remains the same styling */
-.media-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
-  flex-wrap: wrap; 
-}
-
-.potato-image, .reign-image {
-  max-width: 25%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 15px;
-}
-
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .project-card {
-    width: 200px;
-    height: auto;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-}
-
-/* Hover Effect */
-.project-card:hover {
-  transform: scale(1.2);
-}
-
-/* Modal Overlay */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed;
-  z-index: 999; 
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-/* Modal Content Box */
-.modal-content {
-  background-color: #fff;
-  margin: 5% auto;
-  padding: 20px;
-  max-width: 800px;
-  border-radius: 8px;
-  position: relative; /* for the close button */
-}
-
-/* Close Button */
-.close {
-  font-size: 1.5rem;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
-}
-
-.close:hover {
-  color: #666;
-}
-/* Media container in modal */
-.modal-content .media-container {
-  margin-top: 15px;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap; 
-  justify-content: center;
-}
-
-.modal-content .media-container img {
-  max-width: 250px;
-  border-radius: 8px;
-}
-
-.modal-content .media-container iframe {
-  border-radius: 8px;
-}
-
-/* Responsive Sizing */
-@media (max-width: 768px) {
-  .project-card {
-    width: 200px;
-    height: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  .projects-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  .project-card {
-    width: 80%;
-    height: auto;
-  }
-  .modal-content {
-    width: 90%;
-    margin: 10% auto;
-  }
-}
+  <script src="script.js"></script>
+</body>
+</html>
