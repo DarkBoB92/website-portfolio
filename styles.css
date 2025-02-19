@@ -522,7 +522,9 @@ nav {
     max-width: 100%;
   }
 }
-.aboutCSS{
+@media (min-width: 769px){
+  .aboutCSS{
   margin-right: 200px;
   margin-left: 200px;
+  }
 }
