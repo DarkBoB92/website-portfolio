@@ -274,6 +274,12 @@ nav {
   margin: 30px ; /* center the grid */
   justify-items: center;
 }
+@media (min-width: 769px){
+  .project-grid{
+  margin-right: 100px;
+  margin-left: 100px;
+  }
+}
 
 /* ======= Project Cards ======= */
 .project-card {
