@@ -528,3 +528,43 @@ nav {
   margin-left: 200px;
   }
 }
+/* Contact Section Container */
+#contact {
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Container for icons */
+.contact-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* space between icons */
+  margin-top: 20px;
+}
+
+/* Individual icon link */
+.icon {
+  color: #333;
+  font-size: 3rem;    /* icon size */
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect */
+.icon:hover {
+  color: #f9a825;     /* change to your preferred hover color */
+  transform: scale(1.2);
+}
+
+/* Optionally style each platform differently if you like */
+.icon.gmail {
+  /* color: #D44638; */ /* Gmail red, if desired */
+}
+
+.icon.linkedin {
+  /* color: #0A66C2; */ /* LinkedIn blue, if desired */
+}
+
+.icon.github {
+  /* color: #171515; */ /* GitHub dark, if desired */
+}
