@@ -1,3 +1,4 @@
+/***** NAVBAR TOGGLE *****/
 function toggleMenu() {
   const navLinks = document.querySelector(".nav-links");
   const hamburger = document.querySelector(".hamburger");
@@ -14,7 +15,7 @@ document.querySelectorAll(".nav-links a").forEach(link => {
   });
 });
 
-/***** Smooth Scrolling (existing functionality) *****/
+/***** SMOOTH SCROLL *****/
 document.querySelectorAll('nav ul li a').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     e.preventDefault();
@@ -24,53 +25,45 @@ document.querySelectorAll('nav ul li a').forEach(anchor => {
   });
 });
 
-/***** MODAL FUNCTIONALITY *****/
-// 1. Grab all "More Details" buttons 
-const openModalBtns = document.querySelectorAll('.open-modal-btn');
-// 2. Grab all close buttons (the 'x')
-const closeBtns = document.querySelectorAll('[data-close]');
-// 3. Handle opening modal
-openModalBtns.forEach(button => {
-  button.addEventListener('click', () => {
-    const modalSelector = button.getAttribute('data-modal-target');
-    const modal = document.querySelector(modalSelector);
-    modal.classList.add('active');
-  });
-});
-// 4. Handle closing modal 
-closeBtns.forEach(button => {
-  button.addEventListener('click', () => {
-    const modal = button.closest('.modal');
-    modal.classList.remove('active');
-  });
-});
-// 5. Close if user clicks outside modal-content
-window.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal')) {
-    e.target.classList.remove('active');
-  }
-});
-// Smooth scroll for nav links (if you want to keep this)
-document.querySelectorAll('nav ul li a').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    e.preventDefault();
-    document.querySelector(this.getAttribute('href')).scrollIntoView({
-      behavior: 'smooth'
-    });
-  });
-});
+/***** (Unused) "More Details" Logic - Not Active *****/
+// If not using data attributes, you can remove all references to openModalBtns, etc.
+// ...
 
+/***** MODAL OPEN FUNCTION *****/
 function openModal(modalId) {
-  document.getElementById(modalId).style.display = "block";
+  // Show the modal by setting display to block
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = "block";
+  }
 }
 
+/***** MODAL CLOSE FUNCTION WITH VIDEO STOP *****/
 function closeModal(modalId) {
-  document.getElementById(modalId).style.display = "none";
+  // 1. Get the modal element
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+
+  // 2. Hide the modal
+  modal.style.display = "none";
+
+  // VIDEO STOP CODE: Reset each iframe's src to stop playback
+  const iframes = modal.querySelectorAll('iframe');
+  iframes.forEach((iframe) => {
+    // Option A: "Reload" the same src
+    // iframe.src = iframe.src;
+
+    // Option B: Clear src, then restore (forces a full stop & reset to 0)
+    const oldSrc = iframe.src;
+    iframe.src = "";
+    iframe.src = oldSrc;
+  });
 }
 
-// (Optional) Close if user clicks outside the modal-content
+/***** CLOSE MODAL BY CLICKING OUTSIDE *****/
 window.onclick = function(event) {
   if (event.target.classList.contains('modal')) {
-    event.target.style.display = "none";
+    // Instead of just hiding it, call the same closeModal logic so videos stop
+    closeModal(event.target.id);
   }
-}
+};
