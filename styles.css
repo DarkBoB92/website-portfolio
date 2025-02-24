@@ -510,6 +510,12 @@ nav {
   border-radius: 8px;
 }
 
+.video-placeholder iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px; /* <-- Ensures the actual video has rounded corners */
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .home-container {
