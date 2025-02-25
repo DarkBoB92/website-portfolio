@@ -550,14 +550,14 @@ nav {
 .contact-icons {
   display: flex;
   justify-content: center;
-  gap: 20px; /* space between icons */
+  gap: 50px; /* space between icons */
   margin-top: 20px;
 }
 
 /* Individual icon link */
 .icon {
   color: #333;
-  font-size: 3rem;    /* icon size */
+  font-size: 2rem;    /* icon size */
   text-decoration: none;
   transition: color 0.3s ease, transform 0.3s ease;
 }
@@ -570,13 +570,34 @@ nav {
 
 /* Optionally style each platform differently if you like */
 .icon.gmail {
-  /* color: #D44638; */ /* Gmail red, if desired */
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  gap: 8px; 
 }
 
 .icon.linkedin {
-  /* color: #0A66C2; */ /* LinkedIn blue, if desired */
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  gap: 8px; 
 }
 
 .icon.github {
-  /* color: #171515; */ /* GitHub dark, if desired */
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  gap: 8px; 
+}
+
+/* Style the text */
+.icon.gmail span {
+  font-size: 1.3rem; /* Adjust size if needed */
+}
+
+/* Style the text */
+.icon.linkedin span {
+  font-size: 1.3rem; /* Adjust size if needed */
+}
+
+/* Style the text */
+.icon.github span {
+  font-size: 1.3rem; /* Adjust size if needed */
 }
