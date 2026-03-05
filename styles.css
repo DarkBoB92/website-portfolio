@@ -601,3 +601,45 @@ nav {
 .icon.github span {
   font-size: 1.3rem; /* Adjust size if needed */
 }
+
+/* ===== Small fixes / polish (added) ===== */
+
+/* Centre the project grid properly */
+.project-grid {
+  margin: 30px auto;              /* centre grid container */
+  padding: 0 20px;                /* keep some breathing room */
+}
+
+/* Make hover feel better + avoid visual glitches */
+.project-card {
+  will-change: transform;
+  transform-origin: center;
+}
+
+.project-card:hover {
+  transform: scale(1.08);         /* was 1.2 (less jumpy) */
+  z-index: 5;                     /* keeps it above neighbours */
+}
+
+/* Modal: use flex centring reliably + allow scrolling in the modal */
+.modal {
+  display: none;                  /* keep hidden by default */
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;             /* space on small screens */
+}
+
+.modal.show {
+  display: flex;                  /* flex centring when open */
+}
+
+/* Modal content: prevent it going off-screen */
+.modal-content {
+  max-height: 85vh;               /* so it doesn't exceed viewport */
+  overflow: auto;                 /* scroll inside modal if needed */
+}
+
+/* When modal is open, disable background scroll */
+body.modal-open {
+  overflow: hidden;
+}
