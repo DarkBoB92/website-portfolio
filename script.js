@@ -31,29 +31,24 @@ document.querySelectorAll('nav ul li a').forEach(anchor => {
 
 /***** MODAL OPEN FUNCTION *****/
 function openModal(modalId) {
-  // Show the modal by setting display to block
   const modal = document.getElementById(modalId);
   if (modal) {
-    modal.style.display = "block";
+    modal.classList.add("show");
+    document.body.classList.add("modal-open");
   }
 }
 
 /***** MODAL CLOSE FUNCTION WITH VIDEO STOP *****/
 function closeModal(modalId) {
-  // 1. Get the modal element
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
-  // 2. Hide the modal
-  modal.style.display = "none";
+  modal.classList.remove("show");
+  document.body.classList.remove("modal-open");
 
-  // VIDEO STOP CODE: Reset each iframe's src to stop playback
-  const iframes = modal.querySelectorAll('iframe');
+  // Stop embedded video playback
+  const iframes = modal.querySelectorAll("iframe");
   iframes.forEach((iframe) => {
-    // Option A: "Reload" the same src
-    // iframe.src = iframe.src;
-
-    // Option B: Clear src, then restore (forces a full stop & reset to 0)
     const oldSrc = iframe.src;
     iframe.src = "";
     iframe.src = oldSrc;
@@ -61,9 +56,16 @@ function closeModal(modalId) {
 }
 
 /***** CLOSE MODAL BY CLICKING OUTSIDE *****/
-window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
-    // Instead of just hiding it, call the same closeModal logic so videos stop
+window.onclick = function (event) {
+  if (event.target.classList.contains("modal")) {
     closeModal(event.target.id);
   }
 };
+
+/***** CLOSE MODAL WITH ESC *****/
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const openModalEl = document.querySelector(".modal.show");
+    if (openModalEl) closeModal(openModalEl.id);
+  }
+});
