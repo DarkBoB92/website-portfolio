@@ -278,11 +278,10 @@ body {
   perspective: 1100px;
   flex-shrink: 0;
 }
-.carousel-track {
+.carousel-track-2d {
   position: absolute;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
 }
 .mem-card {
   position: absolute;
@@ -295,7 +294,6 @@ body {
   padding: 14px;
   text-align: left;
   cursor: none;
-  transition: transform 0.6s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease, border-color 0.3s, background 0.3s, box-shadow 0.3s;
   backface-visibility: hidden;
   will-change: transform, opacity;
 }
@@ -306,11 +304,6 @@ body {
   box-shadow: 0 8px 24px rgba(91,224,201,0.15);
 }
 .mem-card.active { border-color: rgba(91,224,201,0.5); background: rgba(0,12,28,0.95); box-shadow: 0 8px 24px rgba(91,224,201,0.15); }
-@keyframes cardPulse {
-  0%   { box-shadow: 0 8px 24px rgba(91,224,201,0.15); }
-  40%  { box-shadow: 0 0 60px rgba(91,224,201,0.7), 0 0 120px rgba(91,224,201,0.3); }
-  100% { box-shadow: 0 8px 24px rgba(91,224,201,0.15); }
-}
 .thumb {
   width: 100%; height: 78px;
   border-radius: 6px;
@@ -539,77 +532,130 @@ body {
 }
 .proj-link:hover { background: rgba(91,224,201,0.1); border-color: #5be0c9; }
 
-/* 2D carousel track - no preserve-3d so clicks work correctly */
-.carousel-track-2d {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+/* ============================================================
+   RESPONSIVE LAYER
+   ============================================================ */
+
+/* Touch devices: real cursor, no crosshair, labels always visible */
+@media (pointer: coarse) {
+  body, .xmb-item, .mem-card, .carousel-arrow, .back-btn,
+  .contact-link, .proj-link { cursor: auto; }
+  .crosshair { display: none; }
+  .xmb-label { opacity: 1; transform: translateY(0); }
 }
 
-/* ---- Mobile responsive (portrait) ---- */
-@media (max-width: 600px) {
+/* Tablets and small laptops */
+@media (max-width: 900px) {
+  .about-layout { padding: 30px 32px; gap: 36px; }
+  .skills-layout { padding: 28px 32px; gap: 28px 40px; }
+  .skill-bar-row > span:first-child { width: 150px; }
+  .proj-layout { padding: 24px 28px; gap: 24px; }
+  .screen-topbar { padding: 12px 20px; }
+}
 
-  /* Body can scroll on mobile */
-  body { overflow-y: auto; height: auto; min-height: 100vh; cursor: auto; }
+/* Phones (portrait) */
+@media (max-width: 640px) {
 
-  /* Hero title scales down */
-  .hero h1 { font-size: 22px; letter-spacing: 3px; }
-  .hero p { font-size: 13px; letter-spacing: 2px; }
+  /* Allow natural page scrolling */
+  body {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+  .home {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
 
-  /* XMB icons smaller and tighter */
-  .xmb-row { gap: 16px; margin-top: 16px; }
-  .xmb-icon { width: 52px; height: 52px; font-size: 20px; }
-  .xmb-label { font-size: 10px; letter-spacing: 1px; margin-top: 8px; }
+  .topbar { padding: 10px 16px; font-size: 12px; }
 
-  /* Section label */
-  .section-label { font-size: 10px; letter-spacing: 3px; }
+  .hero h1 { font-size: 24px; letter-spacing: 3px; }
+  .hero p { font-size: 12px; letter-spacing: 2px; margin-top: 6px; }
 
-  /* Carousel tighter on mobile */
-  .carousel-wrap { margin-top: 8px; padding-bottom: 8px; }
-  .carousel-stage { height: 280px; }
+  .xmb-row { gap: 14px; margin-top: 18px; }
+  .xmb-icon { width: 50px; height: 50px; font-size: 19px; border-radius: 12px; }
+  .xmb-label { font-size: 9px; letter-spacing: 1px; margin-top: 8px; }
 
-  /* Screen topbar — stack title below back button on very small screens */
-  .screen-topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
-  .screen-title { font-size: 11px; letter-spacing: 3px; }
+  .section-label { font-size: 10px; letter-spacing: 3px; margin: 14px 0 4px; }
+
+  .carousel-wrap { margin-top: 4px; padding: 0 8px 8px; }
+  .carousel-stage { height: 300px; }
+  .mem-card { width: 180px; height: 245px; padding: 14px; }
+  .thumb { height: 96px; }
+  .name { font-size: 10px; height: 34px; }
+  .carousel-nav { margin-top: 10px; gap: 24px; }
+
+  /* Status strip becomes part of the page flow */
+  .status-strip {
+    position: static;
+    background: none;
+    padding: 12px 12px 18px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    flex-wrap: wrap;
+    gap: 6px;
+    text-align: center;
+  }
+
+  /* Screens: header wraps, content scrolls */
+  .screen-topbar {
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    row-gap: 8px;
+  }
+  .screen-title {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
   .back-btn { font-size: 10px; padding: 6px 12px; }
+  .proj-tags { width: 100%; justify-content: center; }
 
-  /* About — stack vertically */
+  /* ABOUT: stack vertically, everything scrolls */
   .about-layout {
     flex-direction: column;
-    padding: 24px 20px;
+    padding: 22px 18px 48px;
     gap: 24px;
     overflow-y: auto;
   }
-  .about-left { width: 100%; flex-direction: row; align-items: center; gap: 16px; }
-  .avatar-large { width: 80px; height: 80px; flex-shrink: 0; }
-  .about-block p { font-size: 14px; }
+  .about-left { width: 100%; }
+  .avatar-large { width: 96px; height: 96px; }
+  .about-right { overflow: visible; gap: 22px; }
+  .about-block p { font-size: 14px; line-height: 1.65; }
 
-  /* Skills — single column */
+  /* SKILLS: single column */
   .skills-layout {
     grid-template-columns: 1fr;
-    padding: 24px 20px;
-    gap: 24px;
-    overflow-y: auto;
+    padding: 22px 18px 48px;
+    gap: 26px;
   }
-  .skill-bar-row > span:first-child { width: 140px; font-size: 9px; }
+  .skill-bar-row { gap: 8px; margin-bottom: 10px; }
+  .skill-bar-row > span:first-child { width: 130px; font-size: 8.5px; }
+  .skill-pct { width: 20px; font-size: 9px; }
 
-  /* Project screen — stack video above text */
+  /* PROJECT: video stacks above text */
   .proj-layout {
     flex-direction: column;
-    padding: 16px 20px;
+    padding: 16px 18px 48px;
+    gap: 18px;
     overflow-y: auto;
-    gap: 20px;
   }
-  .proj-video { flex: 0 0 auto; height: 200px; }
-  .proj-info { overflow-y: visible; }
+  .proj-video { flex: 0 0 auto; }
+  .video-placeholder { flex: none; height: 190px; }
+  .proj-info { overflow: visible; }
   .proj-info p { font-size: 14px; }
-  .proj-tags { flex-wrap: wrap; }
 
-  /* Contact — padding adjustments */
-  .contact-layout { padding: 24px 20px; }
-  .contact-intro { font-size: 16px; letter-spacing: 3px; }
-  .contact-links { max-width: 100%; }
-
-  /* Status strip smaller */
-  .status-strip { font-size: 8px; letter-spacing: 1px; padding: 8px 16px; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  /* CONTACT */
+  .contact-layout {
+    padding: 36px 18px;
+    justify-content: flex-start;
+  }
+  .contact-intro { font-size: 15px; letter-spacing: 3px; text-align: center; }
+  .contact-sub { font-size: 12px; text-align: center; }
+  .contact-link { padding: 14px 16px; gap: 14px; }
+  .contact-link-value { font-size: 12px; word-break: break-all; }
 }
