@@ -3,46 +3,52 @@ import { projects } from '../data/projects.js'
 import { playHover, playNavigate } from './laser.jsx'
 
 const TOTAL = projects.length
-const PERSPECTIVE = 1100
 
-/* Layout constants scale with viewport width so cards never fly off
-   small screens. Desktop (>=1000px) keeps the exact original look. */
-function getLayoutConstants(vw) {
-  if (vw >= 1000) return { radius: 380, side2: 480, mobile: false }
-  if (vw >= 640)  return { radius: vw * 0.36, side2: vw * 0.46, mobile: false }
-  return { radius: vw * 0.62, side2: vw, mobile: true }
+/* Layout scales with viewport so it never overflows small screens.
+   Desktop keeps the full 3D ring; phones use a focused flat mode. */
+function getConfig(vw) {
+  if (vw >= 1000) return { radius: 720, mobile: false }
+  if (vw >= 640)  return { radius: vw * 0.6, mobile: false }
+  return { radius: vw * 0.62, mobile: true }
 }
 
-function getTransform(offset, vw) {
-  const { radius, side2, mobile } = getLayoutConstants(vw)
-
-  const angle = (offset / TOTAL) * 360
-  const rad = angle * Math.PI / 180
-  const z = Math.cos(rad) * radius
-  const rawX = Math.sin(rad) * radius
-  const perspScale = PERSPECTIVE / (PERSPECTIVE - z)
-  let finalX = rawX * perspScale
-
-  const normalizedZ = (z + radius) / (2 * radius)
-  let scale = 0.5 + 0.5 * normalizedZ
-  let opacity
-  let clickable = Math.abs(offset) <= 1
+/* True 3D ring transform. Cards sit on a cylinder: the ones behind curve
+   around and peek through the gaps of the front cards. */
+function getRingTransform(offset, vw) {
+  const { radius, mobile } = getConfig(vw)
 
   if (mobile) {
-    /* Phone: one big centred card, neighbours peeking at the edges */
-    if (offset === 0)            { finalX = 0;              scale = 1;    opacity = 1 }
-    else if (Math.abs(offset) === 1) { finalX = offset * vw * 0.62; scale = 0.8; opacity = 0.6 }
-    else                         { finalX = offset * vw;    scale = 0.6;  opacity = 0; clickable = false }
-  } else {
-    if (Math.abs(offset) === 2) finalX = offset < 0 ? -side2 : side2
-    if (Math.abs(offset) <= 1)      opacity = 1.0
-    else if (Math.abs(offset) === 2) opacity = 0.45
-    else if (Math.abs(offset) === 3) opacity = 0.18
-    else                             opacity = 0.0
+    // Phone: single centred card, neighbours peeking flat at the edges
+    if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
+    if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw * 0.6}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
+    return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
   }
 
-  const zIndex = Math.round(normalizedZ * 100) + 10
-  return { finalX, scale, opacity, zIndex, clickable }
+  const anglePer = 360 / TOTAL
+  const angle = offset * anglePer
+  const rad = angle * Math.PI / 180
+  const z = Math.cos(rad) * radius - radius   // 0 at front, negative going back
+  const x = Math.sin(rad) * radius
+  const ry = -angle * 0.18                     // subtle rotation, flatter arc
+
+  // Depth cues: back cards smaller-feeling via opacity, front ones clickable
+  const abs = Math.abs(offset)
+  let opacity
+  if (abs === 0) opacity = 1
+  else if (abs === 1) opacity = 0.9
+  else if (abs === 2) opacity = 0.45
+  else if (abs === 3) opacity = 0.18
+  else opacity = 0.06
+
+  const zIndex = Math.round(1000 + z)          // nearer = higher
+  const clickable = abs <= 1
+
+  return {
+    t: `translateX(-50%) translateY(-50%) translateX(${x}px) translateZ(${z}px) rotateY(${ry}deg)`,
+    opacity,
+    z: zIndex,
+    clickable,
+  }
 }
 
 export default function Carousel({ onFire, onNavigate }) {
@@ -71,7 +77,6 @@ export default function Carousel({ onFire, onNavigate }) {
     return () => window.removeEventListener('keydown', handler)
   }, [rotate])
 
-  /* Touch swipe: left/right anywhere on the stage rotates the ring */
   const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
   const onTouchEnd = (e) => {
     if (touchStartX.current === null) return
@@ -80,18 +85,20 @@ export default function Carousel({ onFire, onNavigate }) {
     if (Math.abs(dx) > 45) rotate(dx < 0 ? 1 : -1)
   }
 
+  const mobile = getConfig(vw).mobile
+
   return (
     <div className="carousel-wrap">
       <div
-        className="carousel-stage"
+        className="carousel-stage carousel-3d"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <div className="carousel-track-2d">
+        <div className="carousel-ring">
           {projects.map((proj, i) => {
             const rawOffset = ((i - current) % TOTAL + TOTAL) % TOTAL
             const offset = rawOffset > TOTAL / 2 ? rawOffset - TOTAL : rawOffset
-            const { finalX, scale, opacity, zIndex, clickable } = getTransform(offset, vw)
+            const { t, opacity, z, clickable } = getRingTransform(offset, vw)
             const isActive = offset === 0
 
             return (
@@ -100,11 +107,11 @@ export default function Carousel({ onFire, onNavigate }) {
                 className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}`}
                 style={{
                   position: 'absolute',
-                  top: '46%',
+                  top: '42%',
                   left: '50%',
-                  transform: `translateX(-50%) translateY(-50%) translateX(${finalX}px) scale(${scale})`,
+                  transform: t,
                   opacity,
-                  zIndex,
+                  zIndex: z,
                   pointerEvents: clickable ? 'auto' : 'none',
                   transition: 'transform 0.6s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease',
                 }}
@@ -117,11 +124,8 @@ export default function Carousel({ onFire, onNavigate }) {
                 onMouseLeave={() => { lastHovered.current = null }}
                 onClick={(e) => {
                   if (!clickable) return
-                  /* Off-centre card on mobile: first tap brings it to front */
-                  if (getLayoutConstants(vw).mobile && !isActive) {
-                    rotate(offset > 0 ? 1 : -1)
-                    return
-                  }
+                  if (mobile && !isActive) { rotate(offset > 0 ? 1 : -1); return }
+                  if (!isActive) { rotate(offset > 0 ? 1 : -1); return }
                   onFire(e.currentTarget, i)
                 }}
               >
