@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Boot from './components/Boot.jsx'
 import HomeScreen from './components/HomeScreen.jsx'
 import AboutScreen from './components/AboutScreen.jsx'
@@ -15,31 +15,56 @@ export default function App() {
   const [transitioning, setTransitioning] = useState(false)
   const transitionRef = useRef(null)
 
-  const navigateTo = useCallback((screenId) => {
+  /* Run the fade-to-black, swap the screen, fade back.
+     `pushHistory` controls whether we add a browser history entry
+     (true when the user opens a section, false when we're just
+     reacting to the browser back button so we don't double-stack). */
+  const goToScreen = useCallback((screenId, pushHistory = true) => {
     if (transitioning) return
-    if (screenId === 'cv') {
-      alert('CV download — add your file path here.')
-      return
-    }
     setTransitioning(true)
     transitionRef.current?.fadeIn()
     setTimeout(() => {
       setCurrentScreen(screenId)
+      if (pushHistory) {
+        if (screenId === null) {
+          // returning home — replace so we don't pile up entries
+          window.history.replaceState({ screen: null }, '')
+        } else {
+          window.history.pushState({ screen: screenId }, '')
+        }
+      }
       transitionRef.current?.fadeOut()
       setTimeout(() => setTransitioning(false), 520)
     }, 380)
   }, [transitioning])
 
+  const navigateTo = useCallback((screenId) => {
+    if (screenId === 'cv') {
+      alert('CV download — add your file path here.')
+      return
+    }
+    goToScreen(screenId, true)
+  }, [goToScreen])
+
+  // In-page BACK button: step the browser history back one entry.
+  // This fires popstate, which does the actual transition — keeping
+  // the in-page button and the browser back button perfectly in sync.
   const navigateBack = useCallback(() => {
     if (transitioning) return
-    setTransitioning(true)
-    transitionRef.current?.fadeIn()
-    setTimeout(() => {
-      setCurrentScreen(null)
-      transitionRef.current?.fadeOut()
-      setTimeout(() => setTransitioning(false), 520)
-    }, 380)
+    window.history.back()
   }, [transitioning])
+
+  /* Listen for browser back/forward. When the user (or our own
+     navigateBack) pops history, transition to whatever screen that
+     entry represents — null means home. */
+  useEffect(() => {
+    const onPop = (e) => {
+      const screen = e.state?.screen ?? null
+      goToScreen(screen, false)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [goToScreen])
 
   const renderScreen = () => {
     if (currentScreen === 'about') return <AboutScreen onBack={navigateBack} />
