@@ -3,11 +3,26 @@ import { projects } from '../data/projects.js'
 import { playHover, playNavigate } from './laser.jsx'
 
 const TOTAL = projects.length
+const CARD_W = 210
+const CARD_H = 285
+// Must match .carousel-3d / .carousel-stage perspective in main.css
+const PERSPECTIVE = 1600
 
 function getConfig(vw) {
   if (vw >= 1000) return { radius: 720, mobile: false }
   if (vw >= 640)  return { radius: vw * 0.6, mobile: false }
   return { radius: vw * 0.62, mobile: true }
+}
+
+// Real 3D geometry for a card at a given ring offset: angle, z-depth, x position.
+function get3D(offset, radius) {
+  const anglePer = 360 / TOTAL
+  const angle = offset * anglePer
+  const rad = angle * Math.PI / 180
+  const z = Math.cos(rad) * radius - radius   // <= 0, cards recede as offset grows
+  const x = Math.sin(rad) * radius
+  const ry = -angle * 0.18
+  return { angle, rad, z, x, ry }
 }
 
 function getRingTransform(offset, vw) {
@@ -19,12 +34,7 @@ function getRingTransform(offset, vw) {
     return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
   }
 
-  const anglePer = 360 / TOTAL
-  const angle = offset * anglePer
-  const rad = angle * Math.PI / 180
-  const z = Math.cos(rad) * radius - radius
-  const x = Math.sin(rad) * radius
-  const ry = -angle * 0.18
+  const { z, x, ry } = get3D(offset, radius)
 
   const abs = Math.abs(offset)
   let opacity
@@ -45,9 +55,37 @@ function getRingTransform(offset, vw) {
   }
 }
 
+// The centre + immediate left/right cards render fine visually, but their
+// real hit-boxes (translateZ + rotateY inside a preserve-3d/will-change
+// context) don't reliably line up with where they're painted — only the
+// untransformed centre card (translateZ(0), rotateY(0)) hit-tests correctly.
+// So on desktop we make the 3D cards purely visual (pointer-events: none)
+// and lay flat, non-transformed "catcher" plates over the three front slots,
+// positioned with the same perspective-projection math the browser itself
+// uses to draw the 3D transform, so they land exactly on the visible card.
+function getCatcherStyle(offset, vw) {
+  const { radius } = getConfig(vw)
+  const { z, x } = get3D(offset, radius)
+  const scale = PERSPECTIVE / (PERSPECTIVE - z)   // perspective divide
+  const screenX = x * scale
+
+  return {
+    position: 'absolute',
+    top: '42%',
+    left: '50%',
+    width: CARD_W,
+    height: CARD_H,
+    transform: `translate(-50%, -50%) translateX(${screenX}px) scale(${scale})`,
+    zIndex: 2000 - Math.abs(offset), // centre catcher on top
+    pointerEvents: 'auto',
+    cursor: 'none',
+  }
+}
+
 // current + setCurrent come from the parent so the position survives navigation
 export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
+  const [hoveredOffset, setHoveredOffset] = useState(null)
   const lastHovered = useRef(null)
   const touchStartX = useRef(null)
   const touchMoved = useRef(false)
@@ -103,11 +141,12 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
             const offset = rawOffset > TOTAL / 2 ? rawOffset - TOTAL : rawOffset
             const { t, opacity, z, clickable } = getRingTransform(offset, vw)
             const isActive = offset === 0
+            const isHovered = !mobile && hoveredOffset === offset
 
             return (
               <div
                 key={proj.id}
-                className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}`}
+                className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}${isHovered ? ' hovered' : ''}`}
                 style={{
                   position: 'absolute',
                   top: '42%',
@@ -115,7 +154,9 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                   transform: t,
                   opacity,
                   zIndex: z,
-                  pointerEvents: clickable ? 'auto' : 'none',
+                  // Desktop: catchers below handle all interaction, cards are purely visual.
+                  // Mobile: flat 2D transforms hit-test fine natively, keep it simple.
+                  pointerEvents: mobile && clickable ? 'auto' : 'none',
                   transition: 'transform 0.6s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease',
                 }}
                 onMouseEnter={() => {
@@ -126,16 +167,11 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                 }}
                 onMouseLeave={() => { lastHovered.current = null }}
                 onClick={(e) => {
-                  if (!clickable) return
-                  // Touch: any tap on the carousel just rotates toward that card
-                  if (mobile) {
-                    if (touchMoved.current) return   // was a swipe, already handled
-                    if (!isActive) { rotate(offset > 0 ? 1 : -1) }
-                    else { onFire(e.currentTarget, i) }
-                    return
-                  }
-                  // Desktop: all three front cards open directly
-                  onFire(e.currentTarget, i)
+                  // Only reachable on mobile now (desktop cards are pointer-events:none)
+                  if (!clickable || !mobile) return
+                  if (touchMoved.current) return   // was a swipe, already handled
+                  if (!isActive) { rotate(offset > 0 ? 1 : -1) }
+                  else { onFire(e.currentTarget, i) }
                 }}
               >
                 <div className="thumb" />
@@ -146,6 +182,34 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
             )
           })}
         </div>
+
+        {!mobile && (
+          <div className="carousel-catchers">
+            {[-1, 0, 1].map(offset => {
+              const i = ((current + offset) % TOTAL + TOTAL) % TOTAL
+              return (
+                <div
+                  key={offset}
+                  style={getCatcherStyle(offset, vw)}
+                  onMouseEnter={() => {
+                    if (lastHovered.current !== i) {
+                      playHover()
+                      lastHovered.current = i
+                    }
+                    setHoveredOffset(offset)
+                  }}
+                  onMouseLeave={() => {
+                    lastHovered.current = null
+                    setHoveredOffset(curr => (curr === offset ? null : curr))
+                  }}
+                  onClick={(e) => {
+                    onFire(e.currentTarget, i)
+                  }}
+                />
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div className="carousel-nav">
