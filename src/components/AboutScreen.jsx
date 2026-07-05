@@ -10,24 +10,28 @@ export default function AboutScreen({ onBack }) {
         <div className="about-left">
           <div className="avatar-large" />
           <div className="avatar-name">ROBERTO SCIALPI</div>
-          <div className="avatar-tag">GAME DEVELOPER</div>
+          <div className="avatar-tag">GAME PROGRAMMER</div>
           <div className="avatar-location">📍 LONDON, UK</div>
         </div>
         <div className="about-right">
           <div className="about-block">
             <div className="about-block-title">— PROFILE —</div>
-            <p>First Class Honours graduate in Games Design & Development from the University of Greenwich (2026). Originally from Puglia, Italy, with 12 years in London. Background as a professional chef before transitioning into games technology — bringing the same attention to craft and detail from the kitchen to the engine.</p>
+            <p>Game Programmer based in London, graduating with First Class Honours from the University of Greenwich in Games Design & Development, specialising in Games Programming. I design and program core gameplay mechanics and systems across genres and engines — from companion AI and puzzle logic in Unreal, to networked multiplayer in Unity, extending into XR-based training research on Meta Quest 3 for my dissertation.</p>
+          </div>
+          <div className="about-block">
+            <div className="about-block-title">— BACKGROUND —</div>
+            <p>Originally from Puglia, Italy, and in London for over a decade. Before programming, I spent more than ten years in professional kitchens as a chef — learning to lead under pressure, coordinate a team through constantly shifting conditions, and deliver consistently when timing is everything. The same instincts for systems, pacing and craft now carry into how I build games.</p>
           </div>
           <div className="about-block">
             <div className="about-block-title">— CURRENT ROLE —</div>
-            <p>Research Assistant on a stationary VR environment project for Meta Quest 3. Building multilingual hazard training applications using a data-driven ScriptableObject system designed for construction trainees.</p>
+            <p>Research Assistant at the University of Greenwich, developing a stationary VR hazard training environment for Meta Quest 3 — extending my dissertation research on XR-based skill acquisition into an applied training tool.</p>
           </div>
           <div className="about-block">
-            <div className="about-block-title">— INTERESTS —</div>
-            <p>AI consciousness & NPC architecture · XR simulation · EEG-based BCI research · Procedural systems · Mediterranean cooking</p>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div className="about-block-title">— RECOGNITION —</div>
+            <p>Named in the BIMA 100 Class of 2026 (Student Category) by the British Interactive Media Association, for work shaping the UK's digital industry. University projects nominated for Best Project honours at the Greenwich Shark Expo every year of study, across both individual and team work.</p>
+         </div>
+       </div>
+     </div>
+   </div>
   )
 }

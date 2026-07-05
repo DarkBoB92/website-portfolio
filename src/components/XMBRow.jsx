@@ -17,7 +17,7 @@ export default function XMBRow({ onFire }) {
         <div
           key={id}
           className="xmb-item"
-          onMouseEnter={(e) => {
+          onMouseEnter={() => {
             if (lastHovered.current !== id) { playHover(); lastHovered.current = id }
           }}
           onMouseLeave={() => { lastHovered.current = null }}

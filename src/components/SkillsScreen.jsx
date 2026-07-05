@@ -1,7 +1,5 @@
 import { skills, projects } from '../data/projects.js'
 
-const PIP_MAX = 10
-
 /* Which projects use a given skill — derived from project tech/tags */
 function projectsUsing(matchKeywords) {
   return projects.filter(proj => {
@@ -53,27 +51,23 @@ function SkillIcon({ type }) {
   }
 }
 
-function SkillRow({ item }) {
+function SkillCard({ item }) {
   const used = projectsUsing(item.match)
   return (
-    <div className="skill-row">
-      <div className="skill-icon"><SkillIcon type={item.icon} /></div>
-      <div className="skill-body">
-        <div className="skill-row-head">
-          <span className="skill-name">{item.name}</span>
-          <div className="skill-pips">
-            {Array.from({ length: PIP_MAX }).map((_, i) => (
-              <span key={i} className={`pip${i < item.pips ? ' filled' : ''}`} />
-            ))}
-          </div>
-        </div>
-        {used.length > 0 && (
-          <div className="skill-usedin">
-            <span className="usedin-label">USED IN</span>
-            <span className="usedin-list">{used.map(p => p.name).join(' · ')}</span>
-          </div>
-        )}
+    <div className="skill-card">
+      <div className="skill-card-head">
+        <div className="skill-icon"><SkillIcon type={item.icon} /></div>
+        <span className="skill-name">{item.name}</span>
       </div>
+
+      <p className="skill-spec">{item.spec}</p>
+
+      {used.length > 0 && (
+        <div className="skill-usedin">
+          <span className="usedin-label">USED IN</span>
+          <span className="usedin-list">{used.map(p => p.name).join(' · ')}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -91,7 +85,7 @@ export default function SkillsScreen({ onBack }) {
           <div key={group.group} className="skill-group">
             <div className="skill-group-title">{group.group}</div>
             {group.items.map(item => (
-              <SkillRow key={item.name} item={item} />
+              <SkillCard key={item.name} item={item} />
             ))}
           </div>
         ))}
