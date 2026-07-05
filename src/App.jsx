@@ -13,6 +13,7 @@ export default function App() {
   const [booted, setBooted] = useState(false)
   const [currentScreen, setCurrentScreen] = useState(null) // null = home
   const [transitioning, setTransitioning] = useState(false)
+  const [carouselIndex, setCarouselIndex] = useState(0) // persists across navigation
   const transitionRef = useRef(null)
 
   /* Run the fade-to-black, swap the screen, fade back.
@@ -84,7 +85,11 @@ export default function App() {
       {booted && (
         <>
           {currentScreen === null && (
-            <HomeScreen onNavigate={navigateTo} />
+            <HomeScreen
+              onNavigate={navigateTo}
+              carouselIndex={carouselIndex}
+              setCarouselIndex={setCarouselIndex}
+            />
           )}
           {renderScreen()}
         </>

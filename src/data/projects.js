@@ -2,24 +2,58 @@ export const projects = [
   {
     id: 0,
     name: 'POTATO BONANZA EXTRAVAGANZA',
-    meta: 'PUZZLE · 2023/24',
+    meta: 'ROGUELIKE SHOOTER · GROUP · 2023/24',
     tech: 'UNITY · C#',
-    tags: ['PUZZLE', 'UNITY', 'C#', '2023/24'],
+    tags: ['ROGUELIKE', 'GROUP PROJECT', 'UNITY', 'C#', '2023/24'],
     section: 'THE GAME',
-    description: 'A puzzle game built in Unity. Players must navigate a chaotic world of sentient potatoes, solving increasingly absurd challenges. Built as a first year project, focusing on tight mechanics, comedic tone, and rapid prototyping.',
-    journey: 'One of the first complete Unity projects — pushed rapid iteration and scope management. Focused on delivering polished core mechanics over feature breadth, learning early that knowing what to cut is as important as knowing what to build.',
+    description: 'An isometric roguelike twin-stick shooter built in Unity by a team of three. You play a potato fighting back the kitchen tools sent to destroy it, surviving five minutes of escalating waves while dodging environmental hazards. Features a currency-based enemy spawner, three enemy types, a power-up system, and full gamepad support.',
+    role: 'Gameplay Programmer & Debugger — Input System migration, shooting/weapon/power-up systems, and the team\'s go-to for fixing broken code.',
+    systems: [
+      { name: 'Input System Migration', desc: 'Rebuilt the game\'s controls onto Unity\'s new Input System, supporting keyboard, mouse and full gamepad — including menu navigation, all running in one build.' },
+      { name: 'Shooting & Weapons', desc: 'Built the firing system for both weapons — a straight-firing knife and a timed explosive egg grenade that can hurt the player too, forcing careful aim.' },
+      { name: 'Power-Up System', desc: 'Seven collectable upgrades that change how the player shoots — more projectiles, faster fire rate, bigger throws — dropped between waves.' },
+      { name: 'Debugging & Fixes', desc: 'Diagnosed and fixed the two hardest bugs: a spawner that froze when enemies weren\'t cleared from its list, and a wave counter that skipped waves by running a frame too early.' },
+    ],
+    code: {
+      caption: 'The rest-break bug: the wave coroutine advanced before the spawn lists were actually empty. The fix was an explicit check that both lists are clear before incrementing.',
+      snippet: `// Only advance the wave once every enemy is truly gone
+if (spawnedEnemies.Count == 0 && spawnEnemies.Count == 0)
+{
+    currentWave++;
+    StartCoroutine(CreatingWave());
+}`,
+    },
+    journey: 'My first group project, and the one where I became the team\'s go-to for untangling broken code — a running joke that became reality, since a fresh pair of eyes usually found the flaw. I owned the migration to Unity\'s new Input System after a teammate had started on the old one: the hard part was keeping two input systems alive in the same build, wiring the menu flow, and adapting movement and shooting to the isometric camera. I built the shooting, weapon and power-up systems around it, and took on the debugging nobody else could crack — including a spawner that froze when enemies weren\'t cleared from its list, and a rest-break coroutine that skipped waves by running two frames early. The sharpest lesson came from version control: with the whole team new to Git, a teammate renamed and moved a script onto their own branch, and after a clean merge every Unity reference pointing to it silently broke. Untangling that cost me an afternoon — and taught me more about repositories than any tutorial could.',
     github: '#',
     itch: null,
   },
   {
     id: 1,
     name: 'REIGN OF ELEMENTS',
-    meta: 'RPG · 2023/24',
+    meta: 'ACTION-RPG · PUZZLE · 2023/24',
     tech: 'UNITY · C#',
-    tags: ['RPG', 'UNITY', 'C#', '2023/24'],
+    tags: ['ACTION-RPG', 'PUZZLE', 'UNITY', 'C#', '2023/24'],
     section: 'THE GAME',
-    description: 'An RPG built in Unity exploring elemental combat systems. Players harness fire, water, earth and air through a real-time combat loop with ability chaining and elemental counters. First year project.',
-    journey: 'Designing balanced elemental systems was the core challenge — ensuring each element felt distinct without any becoming dominant. Led to deep exploration of game balance theory and state-machine-driven ability systems in C#.',
+    description: 'Reign Of Elements: Legacy Of The Dragon Mages — a top-down pixel-art action-RPG built solo in Unity. Players wield fire, water and earth spells both as weapons and as keys: each element cancels a matching elemental obstacle (fire opens ice, water opens rock, earth opens fire), turning combat and puzzle-solving into the same system. Collecting power gems unlocks a draconic transformation with new abilities.',
+    role: 'Solo Developer — full architecture, gameplay systems, and pixel art. My first project built deliberately around clean object-oriented design.',
+    systems: [
+      { name: 'Shared Element System', desc: 'A single source of truth for the three elements, used everywhere — casting a spell, taking damage, and opening the matching puzzle doors all reference the same definition, so adding an element later means changing one file.' },
+      { name: 'Universal Health Component', desc: 'One reusable health system that any object — player, enemy, or destructible — can use to take damage and track status effects, written once instead of duplicated per character.' },
+      { name: 'Inheritance-Based Enemies & Items', desc: 'Enemies and collectibles share common parent behaviour, with specific types (melee/ranged enemies, keys/potions/gems) extending it — keeping the code clean and easy to expand.' },
+      { name: 'Player Transformation', desc: 'Collecting power gems transforms the mage into a draconic form, swapping sprites, animations and available spells at runtime.' },
+    ],
+    code: {
+      caption: 'The shared element type lives in its own namespace, so every system references the same definition instead of each script defining its own.',
+      snippet: `namespace SpellType
+{
+    public enum Element { Neutral, Fire, Water, Earth }
+}
+
+// Used identically across spells, doors, altars and enemies
+if (spell.element == door.element)
+    door.Open();`,
+    },
+    journey: 'This is the project that set my programming style — the baseline I have built from ever since. Coming straight off my first group game, where the shared build ended up with two competing health systems, I went solo here determined to do it properly: write each system once, cleanly, so it is easy to change later. That produced a universal Health component any object can use, and two abstract parent classes — Enemy and Collectible — with Melee/Ranged and Key/Potion/PowerGem inheriting and overriding from them. The design decision I am most satisfied with is the SpellType namespace: rather than scatter the element enum across scripts, I gave every system — spell casting, damage, and the puzzle-door logic — a single shared source of truth, so extending the elements later meant touching one file, not hunting through many. It was the first time architecture felt deliberate rather than incidental, and everything I have built since has improved from this point.',
     github: '#',
     itch: null,
   },

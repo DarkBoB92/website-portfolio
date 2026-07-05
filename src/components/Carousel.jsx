@@ -4,21 +4,16 @@ import { playHover, playNavigate } from './laser.jsx'
 
 const TOTAL = projects.length
 
-/* Layout scales with viewport so it never overflows small screens.
-   Desktop keeps the full 3D ring; phones use a focused flat mode. */
 function getConfig(vw) {
   if (vw >= 1000) return { radius: 720, mobile: false }
   if (vw >= 640)  return { radius: vw * 0.6, mobile: false }
   return { radius: vw * 0.62, mobile: true }
 }
 
-/* True 3D ring transform. Cards sit on a cylinder: the ones behind curve
-   around and peek through the gaps of the front cards. */
 function getRingTransform(offset, vw) {
   const { radius, mobile } = getConfig(vw)
 
   if (mobile) {
-    // Phone: single centred card, neighbours peeking flat at the edges
     if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
     if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw * 0.6}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
     return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
@@ -27,11 +22,10 @@ function getRingTransform(offset, vw) {
   const anglePer = 360 / TOTAL
   const angle = offset * anglePer
   const rad = angle * Math.PI / 180
-  const z = Math.cos(rad) * radius - radius   // 0 at front, negative going back
+  const z = Math.cos(rad) * radius - radius
   const x = Math.sin(rad) * radius
-  const ry = -angle * 0.18                     // subtle rotation, flatter arc
+  const ry = -angle * 0.18
 
-  // Depth cues: back cards smaller-feeling via opacity, front ones clickable
   const abs = Math.abs(offset)
   let opacity
   if (abs === 0) opacity = 1
@@ -40,7 +34,7 @@ function getRingTransform(offset, vw) {
   else if (abs === 3) opacity = 0.18
   else opacity = 0.06
 
-  const zIndex = Math.round(1000 + z)          // nearer = higher
+  const zIndex = Math.round(1000 + z)
   const clickable = abs <= 1
 
   return {
@@ -51,11 +45,12 @@ function getRingTransform(offset, vw) {
   }
 }
 
-export default function Carousel({ onFire, onNavigate }) {
-  const [current, setCurrent] = useState(0)
+// current + setCurrent come from the parent so the position survives navigation
+export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
   const lastHovered = useRef(null)
   const touchStartX = useRef(null)
+  const touchMoved = useRef(false)
 
   useEffect(() => {
     const onResize = () => setVw(window.innerWidth)
@@ -66,7 +61,7 @@ export default function Carousel({ onFire, onNavigate }) {
   const rotate = useCallback((dir) => {
     playNavigate()
     setCurrent(c => (c + dir + TOTAL) % TOTAL)
-  }, [])
+  }, [setCurrent])
 
   useEffect(() => {
     const handler = (e) => {
@@ -77,7 +72,14 @@ export default function Carousel({ onFire, onNavigate }) {
     return () => window.removeEventListener('keydown', handler)
   }, [rotate])
 
-  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+    touchMoved.current = false
+  }
+  const onTouchMove = (e) => {
+    if (touchStartX.current === null) return
+    if (Math.abs(e.touches[0].clientX - touchStartX.current) > 10) touchMoved.current = true
+  }
   const onTouchEnd = (e) => {
     if (touchStartX.current === null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
@@ -92,6 +94,7 @@ export default function Carousel({ onFire, onNavigate }) {
       <div
         className="carousel-stage carousel-3d"
         onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         <div className="carousel-ring">
@@ -124,8 +127,14 @@ export default function Carousel({ onFire, onNavigate }) {
                 onMouseLeave={() => { lastHovered.current = null }}
                 onClick={(e) => {
                   if (!clickable) return
-                  if (mobile && !isActive) { rotate(offset > 0 ? 1 : -1); return }
-                  if (!isActive) { rotate(offset > 0 ? 1 : -1); return }
+                  // Touch: any tap on the carousel just rotates toward that card
+                  if (mobile) {
+                    if (touchMoved.current) return   // was a swipe, already handled
+                    if (!isActive) { rotate(offset > 0 ? 1 : -1) }
+                    else { onFire(e.currentTarget, i) }
+                    return
+                  }
+                  // Desktop: all three front cards open directly
                   onFire(e.currentTarget, i)
                 }}
               >

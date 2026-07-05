@@ -3,10 +3,9 @@ import XMBRow from './XMBRow.jsx'
 import Carousel from './Carousel.jsx'
 import { useLaser, playLaser, playConfirm } from './laser.jsx'
 
-export default function HomeScreen({ onNavigate }) {
+export default function HomeScreen({ onNavigate, carouselIndex, setCarouselIndex }) {
   const mousePos = useRef({ x: -100, y: -100 })
   const { fire, LaserElements } = useLaser(mousePos)
-  const crosshairRef = useRef(null)
   const firingRef = useRef(false)   // synchronous lock — blocks rapid repeat clicks
 
   useEffect(() => {
@@ -15,8 +14,6 @@ export default function HomeScreen({ onNavigate }) {
     return () => document.removeEventListener('mousemove', move)
   }, [])
 
-  // firingRef locks the instant the first click lands (before the laser
-  // even starts), so extra clicks during the laser/transition are ignored.
   const handleFire = useCallback((targetEl, destination) => {
     if (firingRef.current) return
     firingRef.current = true
@@ -27,7 +24,6 @@ export default function HomeScreen({ onNavigate }) {
     fire(tx, ty, () => {
       playConfirm()
       onNavigate(destination)
-      // release after the navigation transition has fully settled
       setTimeout(() => { firingRef.current = false }, 1000)
     })
   }, [fire, onNavigate])
@@ -55,7 +51,12 @@ export default function HomeScreen({ onNavigate }) {
 
       <div className="section-label">— PROJECTS —</div>
 
-      <Carousel onFire={handleFire} onNavigate={onNavigate} />
+      <Carousel
+        onFire={handleFire}
+        onNavigate={onNavigate}
+        current={carouselIndex}
+        setCurrent={setCarouselIndex}
+      />
 
       <div className="status-strip">
         <span>FIRST CLASS HONOURS · BSc GAMES DESIGN &amp; DEVELOPMENT</span>
