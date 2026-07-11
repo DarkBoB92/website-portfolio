@@ -331,7 +331,9 @@ body {
   border-radius: 8px;
   margin-bottom: 14px;
   background: linear-gradient(135deg, #1a3a6e, #0d5c63);
+  overflow: hidden;
 }
+.thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .name {
   font-family: 'Orbitron', sans-serif;
   font-size: 16px;
@@ -618,6 +620,14 @@ body {
   font-size: 11px;
   letter-spacing: 3px;
   color: #3a6080;
+}
+.video-embed {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid rgba(91,224,201,0.2);
+  border-radius: 10px;
+  object-fit: cover;
+  background: #000;
 }
 .proj-role {
   border: 1px solid rgba(91,224,201,0.2);

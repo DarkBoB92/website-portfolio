@@ -8,6 +8,9 @@ export const projects = [
     section: 'THE GAME',
     description: 'An isometric roguelike twin-stick shooter built in Unity by a team of three. You play a potato fighting back the kitchen tools sent to destroy it, surviving five minutes of escalating waves while dodging environmental hazards. Features a currency-based enemy spawner, three enemy types, a power-up system, and full gamepad support.',
     role: 'Gameplay Programmer & Debugger — Input System migration, shooting/weapon/power-up systems, and the team\'s go-to for fixing broken code.',
+    video: 'videos/potato-bonanza-showcase.mp4',
+    thumbnail: 'images/potato-bonanza-card.png',
+    thumbnailVideo: 'videos/potato-bonanza-card-loop.mp4',
     systems: [
       { name: 'Input System Migration', desc: 'Rebuilt the game\'s controls onto Unity\'s new Input System, supporting keyboard, mouse and full gamepad — including menu navigation, all running in one build.' },
       { name: 'Shooting & Weapons', desc: 'Built the firing system for both weapons — a straight-firing knife and a timed explosive egg grenade that can hurt the player too, forcing careful aim.' },
@@ -36,6 +39,7 @@ if (spawnedEnemies.Count == 0 && spawnEnemies.Count == 0)
     section: 'THE GAME',
     description: 'Reign Of Elements: Legacy Of The Dragon Mages — a top-down pixel-art action-RPG built solo in Unity. Players wield fire, water and earth spells both as weapons and as keys: each element cancels a matching elemental obstacle (fire opens ice, water opens rock, earth opens fire), turning combat and puzzle-solving into the same system. Collecting power gems unlocks a draconic transformation with new abilities.',
     role: 'Solo Developer — full architecture, gameplay systems, and pixel art. My first project built deliberately around clean object-oriented design.',
+    video: 'https://www.youtube.com/embed/RRdK1kN6s34?start=4',
     systems: [
       { name: 'Shared Element System', desc: 'A single source of truth for the three elements, used everywhere — casting a spell, taking damage, and opening the matching puzzle doors all reference the same definition, so adding an element later means changing one file.' },
       { name: 'Universal Health Component', desc: 'One reusable health system that any object — player, enemy, or destructible — can use to take damage and track status effects, written once instead of duplicated per character.' },

@@ -206,7 +206,27 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                 }}
               >
                 <div className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}${isHovered ? ' hovered' : ''}`}>
-                  <div className="thumb" />
+                  <div className="thumb">
+                  {proj.thumbnailVideo ? (
+                    <video
+                      className="thumb-img"
+                      src={import.meta.env.BASE_URL + proj.thumbnailVideo}
+                      poster={proj.thumbnail ? import.meta.env.BASE_URL + proj.thumbnail : undefined}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                    />
+                  ) : proj.thumbnail && (
+                    <img
+                      className="thumb-img"
+                      src={import.meta.env.BASE_URL + proj.thumbnail}
+                      alt=""
+                      loading="lazy"
+                    />
+                  )}
+                </div>
                   <p className="name">{proj.name}</p>
                   <p className="meta">{proj.meta}</p>
                   <p className="tech">{proj.tech}</p>

@@ -1,7 +1,5 @@
-import { useState } from 'react'
 
 export default function ProjectScreen({ project, onBack }) {
-  const [showCode, setShowCode] = useState(false)
   if (!project) return null
 
   return (
@@ -21,7 +19,29 @@ export default function ProjectScreen({ project, onBack }) {
           {/* LEFT: video hero + role */}
           <div className="proj-left">
             <div className="proj-video">
-              <div className="video-placeholder">[ VIDEO PLACEHOLDER ]</div>
+              {project.video ? (
+                project.video.startsWith('http') ? (
+                  <iframe
+                    className="video-embed"
+                    src={project.video}
+                    title={`${project.name} gameplay footage`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    className="video-embed"
+                    src={import.meta.env.BASE_URL + project.video}
+                    poster={project.thumbnail ? import.meta.env.BASE_URL + project.thumbnail : undefined}
+                    controls
+                    playsInline
+                    preload="metadata"
+                  />
+                )
+              ) : (
+                <div className="video-placeholder">[ VIDEO PLACEHOLDER ]</div>
+              )}
             </div>
             {project.role && (
               <div className="proj-role">
@@ -60,23 +80,6 @@ export default function ProjectScreen({ project, onBack }) {
 
             <div className="proj-section-title mt">— THE JOURNEY —</div>
             <p className="proj-body">{project.journey}</p>
-
-            {project.code && (
-              <div className="under-hood">
-                <button
-                  className="under-hood-toggle"
-                  onClick={() => setShowCode(v => !v)}
-                >
-                  {showCode ? '▾' : '▸'} UNDER THE HOOD
-                </button>
-                {showCode && (
-                  <div className="under-hood-body">
-                    <p className="code-caption">{project.code.caption}</p>
-                    <pre className="code-block"><code>{project.code.snippet}</code></pre>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>
