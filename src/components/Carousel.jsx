@@ -3,13 +3,13 @@ import { projects } from '../data/projects.js'
 import { playHover, playNavigate } from './laser.jsx'
 
 const TOTAL = projects.length
-const CARD_W = 210
-const CARD_H = 285
+const CARD_W = 250
+const CARD_H = 340
 // Must match .carousel-3d / .carousel-stage perspective in main.css
 const PERSPECTIVE = 1600
 
 function getConfig(vw) {
-  if (vw >= 1000) return { radius: 720, mobile: false }
+  if (vw >= 1000) return { radius: 780, mobile: false }
   if (vw >= 640)  return { radius: vw * 0.6, mobile: false }
   return { radius: vw * 0.62, mobile: true }
 }
@@ -142,6 +142,7 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
             const { t, opacity, z, clickable } = getRingTransform(offset, vw)
             const isActive = offset === 0
             const isHovered = !mobile && hoveredOffset === offset
+            const pop = isHovered ? ' scale(1.08) translateY(-10px)' : ''
 
             return (
               <div
@@ -151,13 +152,13 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                   position: 'absolute',
                   top: '42%',
                   left: '50%',
-                  transform: t,
+                  transform: t + pop,
                   opacity,
-                  zIndex: z,
+                  zIndex: isHovered ? z + 500 : z,
                   // Desktop: catchers below handle all interaction, cards are purely visual.
                   // Mobile: flat 2D transforms hit-test fine natively, keep it simple.
                   pointerEvents: mobile && clickable ? 'auto' : 'none',
-                  transition: 'transform 0.6s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease',
+                  transition: 'transform 0.3s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease',
                 }}
                 onMouseEnter={() => {
                   if (clickable && lastHovered.current !== i) {

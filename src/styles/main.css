@@ -92,9 +92,9 @@ body {
 .boot-logo {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 24px;
+  font-size: 34px;
   color: #fff;
-  letter-spacing: 6px;
+  letter-spacing: 8px;
   opacity: 0;
   transform: scale(2.6) rotateY(85deg);
   text-shadow: 2px 0 0 rgba(255,60,90,0.6), -2px 0 0 rgba(60,200,255,0.6), 0 0 30px rgba(140,200,255,0.4);
@@ -106,20 +106,20 @@ body {
   100% { opacity: 1; transform: scale(1) rotateY(0deg); }
 }
 .boot-sub {
-  margin-top: 14px;
+  margin-top: 18px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
-  letter-spacing: 5px;
+  font-size: 18px;
+  letter-spacing: 6px;
   color: #6fa8dc;
   opacity: 0;
   animation: fadeIn 0.5s forwards 1.4s;
 }
 @keyframes fadeIn { to { opacity: 1; } }
 .boot-bar-frame {
-  width: 220px;
-  height: 3px;
+  width: 280px;
+  height: 4px;
   background: rgba(255,255,255,0.08);
-  margin-top: 36px;
+  margin-top: 42px;
   opacity: 0;
   animation: fadeIn 0.4s forwards 1.7s;
 }
@@ -131,9 +131,9 @@ body {
 }
 @keyframes fill { to { width: 100%; } }
 .boot-label {
-  margin-top: 16px;
+  margin-top: 18px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 4px;
   color: #6fa8dc;
   opacity: 0;
@@ -156,16 +156,16 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 32px;
+  padding: 16px 36px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #7fa8d0;
   letter-spacing: 1px;
   flex-shrink: 0;
 }
-.profile-chip { display: flex; align-items: center; gap: 10px; }
+.profile-chip { display: flex; align-items: center; gap: 12px; }
 .avatar {
-  width: 30px; height: 30px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3a8bff, #5be0c9);
 }
@@ -175,25 +175,25 @@ body {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: 10px 20px 0;
+  padding: 6px 20px 0;
   flex-shrink: 0;
 }
 .hero h1 {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 38px;
+  font-size: 46px;
   margin: 0;
-  letter-spacing: 6px;
+  letter-spacing: 7px;
   background: linear-gradient(90deg, #cfe6ff, #8fd9ff 40%, #5be0c9);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .hero p {
-  font-size: 16px;
+  font-size: 18px;
   color: #7fa8d0;
-  letter-spacing: 3px;
-  margin: 8px 0 0;
+  letter-spacing: 4px;
+  margin: 6px 0 0;
 }
 
 /* ---- XMB Row ---- */
@@ -202,8 +202,8 @@ body {
   z-index: 2;
   display: flex;
   justify-content: center;
-  gap: 40px;
-  margin-top: 24px;
+  gap: 48px;
+  margin-top: 18px;
   padding: 0 20px;
   flex-shrink: 0;
 }
@@ -215,14 +215,14 @@ body {
   position: relative;
 }
 .xmb-icon {
-  width: 64px; height: 64px;
-  border-radius: 14px;
+  width: 72px; height: 72px;
+  border-radius: 16px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(120,170,220,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 34px;
   line-height: 1;
   transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -234,8 +234,8 @@ body {
   box-shadow: 0 10px 30px rgba(91,224,201,0.25);
 }
 .xmb-label {
-  margin-top: 14px;
-  font-size: 13px;
+  margin-top: 10px;
+  font-size: 14px;
   letter-spacing: 2px;
   color: #6fa0c8;
   opacity: 0;
@@ -248,10 +248,10 @@ body {
 /* ---- Section label ---- */
 .section-label {
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
-  letter-spacing: 5px;
+  font-size: 15px;
+  letter-spacing: 6px;
   color: #5a8aaa;
-  margin: 20px 0 8px;
+  margin: 14px 0 6px;
   text-align: center;
   position: relative;
   z-index: 2;
@@ -262,7 +262,7 @@ body {
 .carousel-wrap {
   position: relative;
   z-index: 2;
-  margin-top: 10px;
+  margin-top: 0;
   padding: 0 20px 16px;
   display: flex;
   flex-direction: column;
@@ -274,7 +274,7 @@ body {
 .carousel-stage {
   position: relative;
   width: 100%;
-  height: 420px;
+  height: 440px;
   perspective: 1600px;
   flex-shrink: 0;
 }
@@ -297,19 +297,23 @@ body {
 .mem-card {
   position: absolute;
   left: 50%;
-  width: 210px;
-  height: 285px;
+  width: 250px;
+  height: 340px;
   background: rgba(0, 8, 20, 0.92);
   border: 1px solid rgba(120,170,220,0.18);
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 12px;
+  padding: 22px;
   text-align: left;
   cursor: none;
   backface-visibility: hidden;
   will-change: transform, opacity;
 }
 .mem-card:hover,
-.mem-card.hovered { border-color: rgba(91,224,201,0.6); background: rgba(0,8,20,0.95); }
+.mem-card.hovered {
+  border-color: #5be0c9;
+  background: rgba(0,8,20,0.97);
+  box-shadow: 0 14px 34px rgba(91,224,201,0.28);
+}
 .mem-card.front {
   border-color: rgba(91,224,201,0.5);
   background: rgba(0,12,28,0.95);
@@ -317,50 +321,52 @@ body {
 }
 .mem-card.active { border-color: rgba(91,224,201,0.5); background: rgba(0,12,28,0.95); box-shadow: 0 8px 24px rgba(91,224,201,0.15); }
 .thumb {
-  width: 100%; height: 120px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  width: 100%; height: 142px;
+  border-radius: 8px;
+  margin-bottom: 14px;
   background: linear-gradient(135deg, #1a3a6e, #0d5c63);
 }
 .name {
   font-family: 'Orbitron', sans-serif;
-  font-size: 9px;
+  font-size: 16px;
+  line-height: 19px;
   letter-spacing: 0.5px;
   color: #cfe6ff;
-  margin: 0 0 6px;
-  height: 32px;
+  margin: 0 0 8px;
+  height: 42px;
   overflow: hidden;
+  overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.meta { font-size: 12px; color: #6fa0c8; margin: 0 0 3px; }
-.tech { font-size: 10px; color: #4a6f96; letter-spacing: 0.5px; margin: 0; font-family: 'Orbitron', sans-serif; }
+.meta { font-size: 18px; color: #6fa0c8; margin: 0 0 4px; }
+.tech { font-size: 14px; color: #4a6f96; letter-spacing: 0.5px; margin: 0; font-family: 'Orbitron', sans-serif; }
 
 .carousel-nav {
   display: flex;
-  gap: 40px;
-  margin-top: 28px;
+  gap: 48px;
+  margin-top: 10px;
   align-items: center;
   flex-shrink: 0;
 }
 .carousel-arrow {
-  width: 38px; height: 38px;
+  width: 46px; height: 46px;
   border-radius: 50%;
   border: 1px solid rgba(120,170,220,0.3);
   background: rgba(255,255,255,0.03);
   color: #cfe6ff;
-  font-size: 16px;
+  font-size: 19px;
   cursor: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.carousel-arrow:hover { border-color: #5be0c9; background: rgba(91,224,201,0.1); }
-.carousel-dots { display: flex; gap: 8px; }
+.carousel-arrow:hover { border-color: #5be0c9; background: rgba(91,224,201,0.1); transform: scale(1.1); }
+.carousel-dots { display: flex; gap: 9px; }
 .carousel-dots span {
-  width: 6px; height: 6px;
+  width: 7px; height: 7px;
   border-radius: 50%;
   background: rgba(120,170,220,0.3);
   transition: background 0.2s, transform 0.2s;
@@ -372,18 +378,19 @@ body {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 5;
+  pointer-events: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding: 12px 32px;
+  gap: 18px;
+  padding: 14px 32px;
   background: linear-gradient(to top, rgba(0,8,20,0.9), transparent);
   font-family: 'Orbitron', sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 2px;
   color: #2a5070;
 }
-.status-dot { width: 4px; height: 4px; border-radius: 50%; background: #2a5070; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: #2a5070; }
 
 /* ---- Screens ---- */
 .screen {
@@ -396,62 +403,69 @@ body {
   overflow: hidden;
 }
 .screen-topbar {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 32px;
+  padding: 18px 36px;
   border-bottom: 1px solid rgba(91,224,201,0.1);
   flex-shrink: 0;
 }
 .back-btn {
   font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 2px;
   color: #5be0c9;
   background: none;
   border: 1px solid rgba(91,224,201,0.3);
   border-radius: 6px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   cursor: none;
   transition: background 0.2s, border-color 0.2s;
 }
 .back-btn:hover { background: rgba(91,224,201,0.1); border-color: #5be0c9; }
 .screen-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
-  letter-spacing: 5px;
+  font-size: 16px;
+  letter-spacing: 6px;
   color: #cfe6ff;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 /* ---- About ---- */
 .about-layout {
   display: flex;
   flex: 1;
-  padding: 40px 60px;
-  gap: 60px;
+  padding: 56px 72px;
+  gap: 72px;
   min-height: 0;
 }
 .about-left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-shrink: 0;
-  width: 200px;
+  width: 250px;
 }
 .avatar-large {
-  width: 160px; height: 160px;
+  width: 210px; height: 210px;
   border-radius: 50%;
   background: linear-gradient(135deg, #1a3a6e, #0d5c63);
   border: 2px solid rgba(91,224,201,0.4);
-  box-shadow: 0 0 30px rgba(91,224,201,0.15);
+  box-shadow: 0 0 40px rgba(91,224,201,0.18);
 }
-.avatar-name { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 2px; color: #cfe6ff; text-align: center; }
-.avatar-tag { font-size: 13px; color: #5be0c9; letter-spacing: 2px; }
-.avatar-location { font-size: 13px; color: #6fa8d0; margin-top: 4px; }
-.about-right { flex: 1; display: flex; flex-direction: column; gap: 28px; overflow-y: auto; }
-.about-block-title { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 4px; color: #5be0c9; margin-bottom: 10px; }
-.about-block p { font-size: 16px; color: #a0c0dc; line-height: 1.7; margin: 0; }
+.avatar-name { font-family: 'Orbitron', sans-serif; font-size: 19px; letter-spacing: 2px; color: #cfe6ff; text-align: center; margin-top: 6px; }
+.avatar-tag { font-size: 16px; color: #5be0c9; letter-spacing: 2px; }
+.avatar-location { font-size: 15px; color: #6fa8d0; margin-top: 4px; }
+.about-right { flex: 1; display: flex; flex-direction: column; gap: 38px; overflow-y: auto; justify-content: center; max-width: 1100px; }
+.about-block-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 12px; }
+.about-block p { font-size: 19px; color: #a0c0dc; line-height: 1.75; margin: 0; }
 
 /* ---- Skills ---- */
 .skills-layout {
@@ -535,28 +549,28 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   padding: 40px;
 }
-.contact-intro { font-family: 'Orbitron', sans-serif; font-size: 20px; letter-spacing: 5px; color: #cfe6ff; }
-.contact-sub { font-size: 15px; color: #6fa8d0; letter-spacing: 2px; margin-bottom: 20px; }
-.contact-links { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 520px; }
+.contact-intro { font-family: 'Orbitron', sans-serif; font-size: 30px; letter-spacing: 6px; color: #cfe6ff; }
+.contact-sub { font-size: 18px; color: #6fa8d0; letter-spacing: 2px; margin-bottom: 28px; }
+.contact-links { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 680px; }
 .contact-link {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 18px 24px;
+  gap: 26px;
+  padding: 26px 32px;
   border: 1px solid rgba(120,170,220,0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(0,8,20,0.6);
   text-decoration: none;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
   cursor: none;
 }
 .contact-link:hover { border-color: #5be0c9; background: rgba(91,224,201,0.07); transform: translateX(6px); }
-.contact-link-icon { font-family: 'Orbitron', sans-serif; font-size: 20px; color: #5be0c9; width: 36px; text-align: center; flex-shrink: 0; }
-.contact-link-label { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px; color: #5be0c9; margin-bottom: 4px; }
-.contact-link-value { font-size: 14px; color: #a0c0dc; letter-spacing: 1px; }
+.contact-link-icon { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #5be0c9; width: 44px; text-align: center; flex-shrink: 0; }
+.contact-link-label { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px; color: #5be0c9; margin-bottom: 6px; }
+.contact-link-value { font-size: 18px; color: #a0c0dc; letter-spacing: 1px; }
 
 /* ---- Project screens ---- */
 .proj-scroll {
@@ -757,6 +771,8 @@ body {
     row-gap: 8px;
   }
   .screen-title {
+    position: static;
+    transform: none;
     flex: 1;
     min-width: 0;
     text-align: center;
@@ -812,4 +828,22 @@ body {
   .contact-sub { font-size: 12px; text-align: center; }
   .contact-link { padding: 14px 16px; gap: 14px; }
   .contact-link-value { font-size: 12px; word-break: break-all; }
+}
+
+/* ---- Short viewport safety (small laptops) ---- */
+/* The home screen is a fixed 100vh layout, so on shorter screens we trim
+   the non-card elements to keep the carousel nav above the status strip.
+   Card dimensions are JS constants (Carousel.jsx) and stay untouched. */
+@media (max-height: 860px) and (min-width: 641px) {
+  .topbar { padding: 10px 32px; }
+  .hero { padding-top: 2px; }
+  .hero h1 { font-size: 38px; letter-spacing: 6px; }
+  .hero p { font-size: 16px; margin-top: 4px; }
+  .xmb-row { margin-top: 12px; }
+  .xmb-icon { width: 62px; height: 62px; font-size: 25px; }
+  .xmb-label { margin-top: 8px; font-size: 13px; }
+  .section-label { margin: 10px 0 4px; font-size: 13px; }
+  .carousel-stage { height: 420px; }
+  .carousel-nav { margin-top: 4px; }
+  .carousel-arrow { width: 40px; height: 40px; font-size: 17px; }
 }
