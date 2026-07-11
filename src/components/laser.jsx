@@ -3,7 +3,27 @@ import { useRef, useCallback } from 'react'
 let audioCtx = null
 function getCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  // Browsers park the context as 'suspended' until a user gesture has occurred.
+  // Nudge it every time we're asked, so recovery is automatic (Safari can also
+  // re-suspend it after tab switches).
+  if (audioCtx.state === 'suspended') audioCtx.resume()
   return audioCtx
+}
+
+// Unlock audio at the earliest moment the browser permits: the first qualifying
+// gesture anywhere on the page (click, key press, or tap) - even one that hits
+// nothing wired to sound. Hover and wheel scroll never qualify; that's browser
+// autoplay policy and cannot be bypassed.
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    getCtx()
+    window.removeEventListener('pointerdown', unlock)
+    window.removeEventListener('keydown', unlock)
+    window.removeEventListener('touchend', unlock)
+  }
+  window.addEventListener('pointerdown', unlock)
+  window.addEventListener('keydown', unlock)
+  window.addEventListener('touchend', unlock)
 }
 
 export function playHover() {
