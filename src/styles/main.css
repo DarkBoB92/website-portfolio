@@ -294,19 +294,24 @@ body {
   position: absolute;
   inset: 0;
 }
-.mem-card {
+.mem-slot {
   position: absolute;
-  left: 50%;
   width: 250px;
   height: 340px;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.mem-card {
+  width: 100%;
+  height: 100%;
   background: rgba(0, 8, 20, 0.92);
   border: 1px solid rgba(120,170,220,0.18);
   border-radius: 12px;
   padding: 22px;
   text-align: left;
   cursor: none;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(.25,.85,.35,1), border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 .mem-card:hover,
 .mem-card.hovered {
@@ -314,6 +319,7 @@ body {
   background: rgba(0,8,20,0.97);
   box-shadow: 0 14px 34px rgba(91,224,201,0.28);
 }
+.mem-card.hovered { transform: scale(1.08) translateY(-10px); }
 .mem-card.front {
   border-color: rgba(91,224,201,0.5);
   background: rgba(0,12,28,0.95);
@@ -345,25 +351,32 @@ body {
 
 .carousel-nav {
   display: flex;
-  gap: 48px;
   margin-top: 10px;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 .carousel-arrow {
-  width: 46px; height: 46px;
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  width: 62px; height: 62px;
   border-radius: 50%;
-  border: 1px solid rgba(120,170,220,0.3);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(120,170,220,0.35);
+  background: rgba(0,10,24,0.72);
   color: #cfe6ff;
-  font-size: 19px;
+  font-size: 26px;
+  z-index: 2600;
   cursor: none;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  user-select: none;
 }
-.carousel-arrow:hover { border-color: #5be0c9; background: rgba(91,224,201,0.1); transform: scale(1.1); }
+.carousel-arrow.side-left  { left: 3%; }
+.carousel-arrow.side-right { right: 3%; }
+.carousel-arrow:hover { border-color: #5be0c9; background: rgba(91,224,201,0.14); transform: translateY(-50%) scale(1.12); }
 .carousel-dots { display: flex; gap: 9px; }
 .carousel-dots span {
   width: 7px; height: 7px;
@@ -747,10 +760,14 @@ body {
 
   .carousel-wrap { margin-top: 4px; padding: 0 8px 8px; }
   .carousel-stage { height: 300px; }
-  .mem-card { width: 180px; height: 245px; padding: 14px; }
+  .mem-slot { width: 180px; height: 245px; }
+  .mem-card { padding: 14px; }
   .thumb { height: 96px; }
   .name { font-size: 10px; height: 34px; }
   .carousel-nav { margin-top: 10px; gap: 24px; }
+  .carousel-arrow { width: 40px; height: 40px; font-size: 17px; }
+  .carousel-arrow.side-left { left: 8px; }
+  .carousel-arrow.side-right { right: 8px; }
 
   /* Status strip becomes part of the page flow */
   .status-strip {
@@ -845,5 +862,5 @@ body {
   .section-label { margin: 10px 0 4px; font-size: 13px; }
   .carousel-stage { height: 420px; }
   .carousel-nav { margin-top: 4px; }
-  .carousel-arrow { width: 40px; height: 40px; font-size: 17px; }
+  .carousel-arrow { width: 52px; height: 52px; font-size: 22px; }
 }

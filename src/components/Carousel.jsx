@@ -89,6 +89,8 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
   const lastHovered = useRef(null)
   const touchStartX = useRef(null)
   const touchMoved = useRef(false)
+  const wheelAcc = useRef(0)
+  const wheelLastStep = useRef(0)
 
   useEffect(() => {
     const onResize = () => setVw(window.innerWidth)
@@ -127,8 +129,35 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
 
   const mobile = getConfig(vw).mobile
 
+  // Wheel navigation: scroll down (or trackpad-right) = next, scroll up = previous.
+  //
+  // Delta accumulator rather than a time-lock, so speed scales with intent:
+  // each ~WHEEL_STEP px of accumulated scroll fires one card step (≈ one mouse
+  // notch), floored at WHEEL_MIN_INTERVAL ms between steps. Resetting the bucket
+  // after each step defuses trackpad inertia — the decaying tail of tiny deltas
+  // can't refill it, so a flick settles after at most one extra card instead of
+  // spinning the whole ring.
+  const WHEEL_STEP = 100
+  const WHEEL_MIN_INTERVAL = 90
+  const onWheel = (e) => {
+    const raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+    // deltaMode: 0 = pixels, 1 = lines (Firefox), 2 = pages — normalise to px
+    const unit = e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 300 : 1
+    const delta = raw * unit
+    if (delta === 0) return
+    // Direction change discards leftover momentum from the previous gesture
+    if (Math.sign(delta) !== Math.sign(wheelAcc.current)) wheelAcc.current = 0
+    wheelAcc.current += delta
+    const now = performance.now()
+    if (Math.abs(wheelAcc.current) >= WHEEL_STEP && now - wheelLastStep.current >= WHEEL_MIN_INTERVAL) {
+      wheelLastStep.current = now
+      rotate(wheelAcc.current > 0 ? 1 : -1)
+      wheelAcc.current = 0
+    }
+  }
+
   return (
-    <div className="carousel-wrap">
+    <div className="carousel-wrap" onWheel={onWheel}>
       <div
         className="carousel-stage carousel-3d"
         onTouchStart={onTouchStart}
@@ -142,23 +171,24 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
             const { t, opacity, z, clickable } = getRingTransform(offset, vw)
             const isActive = offset === 0
             const isHovered = !mobile && hoveredOffset === offset
-            const pop = isHovered ? ' scale(1.08) translateY(-10px)' : ''
 
             return (
               <div
                 key={proj.id}
-                className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}${isHovered ? ' hovered' : ''}`}
+                className="mem-slot"
                 style={{
                   position: 'absolute',
                   top: '42%',
                   left: '50%',
-                  transform: t + pop,
+                  transform: t,
                   opacity,
                   zIndex: isHovered ? z + 500 : z,
                   // Desktop: catchers below handle all interaction, cards are purely visual.
                   // Mobile: flat 2D transforms hit-test fine natively, keep it simple.
                   pointerEvents: mobile && clickable ? 'auto' : 'none',
-                  transition: 'transform 0.3s cubic-bezier(.25,.85,.35,1), opacity 0.6s ease',
+                  // Slow, gentle glide for ring rotation only — the hover pop lives
+                  // on the inner .mem-card with its own faster transition.
+                  transition: 'transform 0.55s cubic-bezier(.22,.8,.3,1), opacity 0.6s ease',
                 }}
                 onMouseEnter={() => {
                   if (clickable && lastHovered.current !== i) {
@@ -172,13 +202,15 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                   if (!clickable || !mobile) return
                   if (touchMoved.current) return   // was a swipe, already handled
                   if (!isActive) { rotate(offset > 0 ? 1 : -1) }
-                  else { onFire(e.currentTarget, i) }
+                  else { onFire(e.currentTarget.querySelector('.mem-card'), i) }
                 }}
               >
-                <div className="thumb" />
-                <p className="name">{proj.name}</p>
-                <p className="meta">{proj.meta}</p>
-                <p className="tech">{proj.tech}</p>
+                <div className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}${isHovered ? ' hovered' : ''}`}>
+                  <div className="thumb" />
+                  <p className="name">{proj.name}</p>
+                  <p className="meta">{proj.meta}</p>
+                  <p className="tech">{proj.tech}</p>
+                </div>
               </div>
             )
           })}
@@ -211,16 +243,17 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
             })}
           </div>
         )}
+
+        <div className="carousel-arrow side-left" onClick={() => rotate(-1)}>‹</div>
+        <div className="carousel-arrow side-right" onClick={() => rotate(1)}>›</div>
       </div>
 
       <div className="carousel-nav">
-        <div className="carousel-arrow" onClick={() => rotate(-1)}>‹</div>
         <div className="carousel-dots">
           {projects.map((_, i) => (
             <span key={i} className={i === current ? 'active' : ''} />
           ))}
         </div>
-        <div className="carousel-arrow" onClick={() => rotate(1)}>›</div>
       </div>
     </div>
   )
