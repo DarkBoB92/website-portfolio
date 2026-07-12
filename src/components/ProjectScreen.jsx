@@ -1,4 +1,6 @@
 
+import ImageGallery from './ImageGallery'
+
 export default function ProjectScreen({ project, onBack }) {
   if (!project) return null
 
@@ -39,6 +41,8 @@ export default function ProjectScreen({ project, onBack }) {
                     preload="metadata"
                   />
                 )
+              ) : project.gallery && project.gallery.length > 0 ? (
+                <ImageGallery images={project.gallery} />
               ) : (
                 <div className="video-placeholder">[ VIDEO PLACEHOLDER ]</div>
               )}

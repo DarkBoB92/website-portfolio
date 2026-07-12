@@ -218,14 +218,14 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                       playsInline
                       preload="auto"
                     />
-                  ) : proj.thumbnail && (
+                  ) : proj.thumbnail ? (
                     <img
                       className="thumb-img"
                       src={import.meta.env.BASE_URL + proj.thumbnail}
                       alt=""
                       loading="lazy"
                     />
-                  )}
+                  ) : null}
                 </div>
                   <p className="name">{proj.name}</p>
                   <p className="meta">{proj.meta}</p>

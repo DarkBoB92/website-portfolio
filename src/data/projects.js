@@ -70,6 +70,13 @@ if (spell.element == door.element)
     tech: 'ARDUINO · C/C++',
     tags: ['PHYSICAL COMPUTING', 'GROUP PROJECT', 'ARDUINO', '2024/25'],
     section: 'THE PROJECT',
+    thumbnail: 'images/gramophone-card.gif',
+    gallery: [
+      { src: 'images/gramophone-exterior-front.jpg', caption: 'The finished build — vinyl loaded, tonearm resting on the record' },
+      { src: 'images/gramophone-exterior-side.jpg', caption: 'Second exterior angle, showing the drilled panel for the conductive touch-button puzzle' },
+      { src: 'images/gramophone-internals.jpg', caption: 'Every sensor, actuator and breadboard wired inside — RFID reader, speaker, capacitive buttons, no game engine involved' },
+      { src: 'images/gramophone-early-prototype.jpg', caption: 'Where it started — an early paper-and-cardboard test of the horn and tonearm concept, before any electronics were involved' },
+    ],
     description: 'A physical computing group project built for the Physical Computing module. The Bizarre Gramophone is an interactive puzzle box styled as a vintage gramophone, combining a rotary-encoder crank, spinning vinyl, capacitive touch buttons, Hall effect sensors, RFID puzzle selection and audio-driven clues into a working two-puzzle prototype — built entirely on an Arduino Mega, no game engine involved.',
     role: 'Hardware & Electronics Lead — wired and integrated every sensor and actuator in the build, co-designed the puzzle mechanics with a teammate, and debugged the crank/LED sync fault that put the whole progression system at risk close to deadline.',
     systems: [
