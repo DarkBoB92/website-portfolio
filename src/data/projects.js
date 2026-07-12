@@ -96,6 +96,9 @@ if (spell.element == door.element)
     tech: 'UNREAL · BLUEPRINTS',
     tags: ['PUZZLE-ADVENTURE', 'UNREAL', 'BLUEPRINTS', '2024/25'],
     section: 'THE GAME',
+    video: 'videos/echoes-of-alchemy-showcase.mp4',
+    thumbnail: 'images/echoes-of-alchemy-card.png',
+    thumbnailVideo: 'videos/echoes-of-alchemy-card-loop.mp4',
     description: 'A solo puzzle-adventure built in Unreal Engine, entirely in Blueprints. Players take on alchemist Gideon Blackwood, accompanied by AI companion Brio, exploring a cel-shaded dungeon to craft the legendary Philosopher\'s Stone. Combines environmental puzzles, an alchemical crafting system, and a navmesh-driven companion who can solve puzzles independently — refined across two rounds of playtesting.',
     role: 'Solo Developer — full Blueprint architecture, including companion AI/navmesh, physics-driven puzzle doors, dynamic audio layering, and lighting.',
     systems: [
