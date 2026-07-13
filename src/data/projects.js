@@ -165,6 +165,9 @@ if (spell.element == door.element)
     tech: 'UNITY · C#',
     tags: ['CAFE SIM', 'GROUP PROJECT', 'MOBILE', 'UNITY', 'C#', '2025/26'],
     section: 'THE GAME',
+    video: 'videos/catpuccino-showcase.mp4',
+    thumbnail: 'images/catpuccino-card.png',
+    thumbnailVideo: 'videos/catpuccino-card-loop.mp4',
     description: 'A cosy cafe-management sim for mobile, built by a five-person team under an external industry brief from Frontier Developments. Serve drinks to customers with distinct personalities, brew and customise orders, and grow a cafe whose foot traffic and mood shift with live real-world weather at the player\'s location. Presented in its final form to a former Frontier Head of Game Design.',
     role: 'Programmer — mobile touch-input character controller, live weather API integration, customer behaviour and mood-meter systems, and camera movement, plus game-flow diagrams and team workflow (Trello/Discord/Drive) for the five-person team.',
     systems: [
