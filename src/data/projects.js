@@ -127,6 +127,9 @@ if (spell.element == door.element)
     tech: 'UNREAL · C++',
     tags: ['DEV TOOL', 'UNREAL', 'C++', '2024/25'],
     section: 'THE TOOL',
+    video: 'videos/procedural-scene-populator-showcase.mp4',
+    thumbnail: 'images/procedural-scene-populator-card.png',
+    thumbnailVideo: 'videos/procedural-scene-populator-card-loop.mp4',
     description: 'A custom Unreal Engine editor plugin built entirely in C++. The Procedural Scene Populator raycasts across a user-defined grid, checking density, spacing and reference-proximity constraints before spawning and surface-snapping prefabs — automating scene population while keeping the designer in full control of the rules.',
     role: 'Solo Developer — full C++ plugin architecture: the grid-based placement engine, the constraint and spacing system, and the Slate editor UI, built entirely inside Unreal.',
     systems: [
