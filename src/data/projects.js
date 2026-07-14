@@ -346,6 +346,13 @@ if (!hit) {
     tech: 'TABLETOP · PAPER PROTOTYPE',
     tags: ['GAME JAM', 'TABLETOP', 'GROUP PROJECT', '2025/26'],
     section: 'THE JAM',
+    thumbnail: 'images/capsize-card.gif',
+    gallery: [
+      { src: 'images/capsize-full-board.jpg', caption: 'The full prototype: hex-tile grid, string-boundary betting area, chip bank and tile bag' },
+      { src: 'images/capsize-tile-grid-detail.jpg', caption: 'Close on the hex grid — hand-marked Nothing/Event/Deep Water tiles radiating out from the centre' },
+      { src: 'images/capsize-betting-area.jpg', caption: 'The betting area mid-race — dice thrown inside the string boundary, chips staked on the outcome' },
+      { src: 'images/capsize-components.jpg', caption: 'The full kit: hex tile bag, chip stacks and the permanent Whirlpool tile' },
+    ],
     description: "A hex-tile tabletop racing game for up to 4 players, designed and built from scratch in a lecturer-run 2-day game jam on the theme \"Small Boats.\" Players manage a shared chip economy, bet on dice races where boat size trades off against dice count, and explore a hex map that's revealed tile-by-tile as they move — closing with a dual win condition (first to the end, or most gold if several arrive together).",
     role: "Shared design role across a 4-person team, all of us new to tabletop design. My own focus was the chip economy and betting system, and running the structured playtest-and-revise loop between rounds.",
     systems: [
