@@ -108,7 +108,7 @@ body {
 .boot-sub {
   margin-top: 18px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 18px;
+  font-size: 19px;
   letter-spacing: 6px;
   color: #6fa8dc;
   opacity: 0;
@@ -133,7 +133,7 @@ body {
 .boot-label {
   margin-top: 18px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 4px;
   color: #6fa8dc;
   opacity: 0;
@@ -158,7 +158,7 @@ body {
   align-items: center;
   padding: 16px 36px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   color: #7fa8d0;
   letter-spacing: 1px;
   flex-shrink: 0;
@@ -168,6 +168,9 @@ body {
   width: 36px; height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3a8bff, #5be0c9);
+  background-image: url('/website-portfolio/images/profile-avatar.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 /* ---- Hero ---- */
@@ -190,7 +193,7 @@ body {
   color: transparent;
 }
 .hero p {
-  font-size: 18px;
+  font-size: 19px;
   color: #7fa8d0;
   letter-spacing: 4px;
   margin: 6px 0 0;
@@ -235,7 +238,7 @@ body {
 }
 .xmb-label {
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: 2px;
   color: #6fa0c8;
   opacity: 0;
@@ -248,7 +251,7 @@ body {
 /* ---- Section label ---- */
 .section-label {
   font-family: 'Orbitron', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 6px;
   color: #5a8aaa;
   margin: 14px 0 6px;
@@ -338,7 +341,7 @@ body {
 
 .name {
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 19px;
   letter-spacing: 0.5px;
   color: #cfe6ff;
@@ -350,8 +353,8 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.meta { font-size: 18px; color: #6fa0c8; margin: 0 0 4px; }
-.tech { font-size: 14px; color: #4a6f96; letter-spacing: 0.5px; margin: 0; font-family: 'Orbitron', sans-serif; }
+.meta { font-size: 19px; color: #6fa0c8; margin: 0 0 4px; }
+.tech { font-size: 15px; color: #4a6f96; letter-spacing: 0.5px; margin: 0; font-family: 'Orbitron', sans-serif; }
 
 .carousel-nav {
   display: flex;
@@ -403,7 +406,7 @@ body {
   padding: 14px 32px;
   background: linear-gradient(to top, rgba(0,8,20,0.9), transparent);
   font-family: 'Orbitron', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 2px;
   color: #2a5070;
 }
@@ -430,7 +433,7 @@ body {
 }
 .back-btn {
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 2px;
   color: #5be0c9;
   background: none;
@@ -447,7 +450,7 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   letter-spacing: 6px;
   color: #cfe6ff;
   white-space: nowrap;
@@ -474,15 +477,18 @@ body {
   width: 210px; height: 210px;
   border-radius: 50%;
   background: linear-gradient(135deg, #1a3a6e, #0d5c63);
+  background-image: url('/website-portfolio/images/profile-avatar.jpg');
+  background-size: cover;
+  background-position: center;
   border: 2px solid rgba(91,224,201,0.4);
   box-shadow: 0 0 40px rgba(91,224,201,0.18);
 }
 .avatar-name { font-family: 'Orbitron', sans-serif; font-size: 19px; letter-spacing: 2px; color: #cfe6ff; text-align: center; margin-top: 6px; }
-.avatar-tag { font-size: 16px; color: #5be0c9; letter-spacing: 2px; }
-.avatar-location { font-size: 15px; color: #6fa8d0; margin-top: 4px; }
+.avatar-tag { font-size: 17px; color: #5be0c9; letter-spacing: 2px; }
+.avatar-location { font-size: 16px; color: #6fa8d0; margin-top: 4px; }
 .about-right { flex: 1; display: flex; flex-direction: column; gap: 38px; overflow-y: auto; justify-content: center; max-width: 1100px; }
-.about-block-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 12px; }
-.about-block p { font-size: 19px; color: #a0c0dc; line-height: 1.75; margin: 0; }
+.about-block-title { font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 12px; }
+.about-block p { font-size: 21px; color: #a0c0dc; line-height: 1.75; margin: 0; }
 
 /* ---- Skills ---- */
 .skills-layout {
@@ -495,7 +501,7 @@ body {
   min-height: 0;
   align-content: start;
 }
-.skill-group-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 24px; }
+.skill-group-title { font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 24px; }
 
 .skill-card {
   padding: 18px 20px;
@@ -529,13 +535,13 @@ body {
 }
 .skill-name {
   font-family: 'Orbitron', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   color: #cfe6ff;
   letter-spacing: 1px;
 }
 
 .skill-spec {
-  font-size: 15px;
+  font-size: 16px;
   color: #a0c0dc;
   line-height: 1.6;
   margin: 0 0 12px;
@@ -547,14 +553,14 @@ body {
 }
 .usedin-label {
   font-family: 'Orbitron', sans-serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
   color: #5be0c9;
   display: block;
   margin-bottom: 5px;
 }
 .usedin-list {
-  font-size: 12.5px;
+  font-size: 14px;
   color: #6fa0c8;
   line-height: 1.5;
 }
@@ -570,7 +576,7 @@ body {
   padding: 40px;
 }
 .contact-intro { font-family: 'Orbitron', sans-serif; font-size: 30px; letter-spacing: 6px; color: #cfe6ff; }
-.contact-sub { font-size: 18px; color: #6fa8d0; letter-spacing: 2px; margin-bottom: 28px; }
+.contact-sub { font-size: 19px; color: #6fa8d0; letter-spacing: 2px; margin-bottom: 28px; }
 .contact-links { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 680px; }
 .contact-link {
   display: flex;
@@ -586,8 +592,8 @@ body {
 }
 .contact-link:hover { border-color: #5be0c9; background: rgba(91,224,201,0.07); transform: translateX(6px); }
 .contact-link-icon { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #5be0c9; width: 44px; text-align: center; flex-shrink: 0; }
-.contact-link-label { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px; color: #5be0c9; margin-bottom: 6px; }
-.contact-link-value { font-size: 18px; color: #a0c0dc; letter-spacing: 1px; }
+.contact-link-label { font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 3px; color: #5be0c9; margin-bottom: 6px; }
+.contact-link-value { font-size: 19px; color: #a0c0dc; letter-spacing: 1px; }
 
 /* ---- Project screens ---- */
 .proj-scroll {
@@ -619,7 +625,7 @@ body {
   align-items: center;
   justify-content: center;
   font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   color: #3a6080;
 }
@@ -676,7 +682,7 @@ body {
 .img-gallery-arrow:hover { border-color: #5be0c9; background: rgba(91,224,201,0.18); transform: translateY(-50%) scale(1.08); }
 .img-gallery-caption {
   margin-top: 12px;
-  font-size: 14px;
+  font-size: 15px;
   color: #a0c0dc;
   text-align: center;
   min-height: 1.4em;
@@ -698,17 +704,17 @@ body {
 }
 .proj-role-label {
   font-family: 'Orbitron', sans-serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 3px;
   color: #5be0c9;
   margin-bottom: 8px;
 }
-.proj-role p { font-size: 15px; color: #cfe6ff; line-height: 1.6; margin: 0; }
+.proj-role p { font-size: 16px; color: #cfe6ff; line-height: 1.6; margin: 0; }
 
 .proj-right { display: flex; flex-direction: column; }
-.proj-section-title { font-family: 'Orbitron', sans-serif; font-size: 12px; letter-spacing: 4px; color: #5be0c9; margin-bottom: 12px; }
+.proj-section-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 4px; color: #5be0c9; margin-bottom: 12px; }
 .proj-section-title.mt { margin-top: 28px; }
-.proj-body { font-size: 16px; color: #a0c0dc; line-height: 1.75; margin: 0; }
+.proj-body { font-size: 19px; color: #a0c0dc; line-height: 1.75; margin: 0; }
 
 .systems-grid {
   display: grid;
@@ -725,17 +731,17 @@ body {
 .system-card:hover { border-color: rgba(91,224,201,0.4); background: rgba(91,224,201,0.04); }
 .system-name {
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.5px;
   color: #cfe6ff;
   margin-bottom: 7px;
 }
-.system-desc { font-size: 14px; color: #8fb0cc; line-height: 1.55; }
+.system-desc { font-size: 16px; color: #8fb0cc; line-height: 1.55; }
 
 .under-hood { margin-top: 24px; }
 .under-hood-toggle {
   font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   color: #5be0c9;
   background: none;
@@ -747,7 +753,7 @@ body {
 }
 .under-hood-toggle:hover { background: rgba(91,224,201,0.1); border-color: #5be0c9; }
 .under-hood-body { margin-top: 14px; }
-.code-caption { font-size: 13px; color: #8fb0cc; line-height: 1.6; margin: 0 0 12px; font-style: italic; }
+.code-caption { font-size: 14px; color: #8fb0cc; line-height: 1.6; margin: 0 0 12px; font-style: italic; }
 .code-block {
   background: rgba(0,4,12,0.8);
   border: 1px solid rgba(91,224,201,0.15);
@@ -758,18 +764,18 @@ body {
 }
 .code-block code {
   font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 13px;
+  font-size: 14px;
   color: #a8d8cc;
   line-height: 1.6;
   white-space: pre;
 }
 
 .proj-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tag { font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 1px; color: #5be0c9; border: 1px solid rgba(91,224,201,0.35); border-radius: 4px; padding: 3px 8px; }
+.tag { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 1px; color: #5be0c9; border: 1px solid rgba(91,224,201,0.35); border-radius: 4px; padding: 3px 8px; }
 .proj-links { display: flex; gap: 12px; }
 .proj-link {
   font-family: 'Orbitron', sans-serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   color: #5be0c9;
   border: 1px solid rgba(91,224,201,0.35);
@@ -818,23 +824,23 @@ body {
     min-height: 100dvh;
   }
 
-  .topbar { padding: 10px 16px; font-size: 12px; }
+  .topbar { padding: 10px 16px; font-size: 13px; }
 
-  .hero h1 { font-size: 24px; letter-spacing: 3px; }
-  .hero p { font-size: 12px; letter-spacing: 2px; margin-top: 6px; }
+  .hero h1 { font-size: 26px; letter-spacing: 3px; }
+  .hero p { font-size: 13px; letter-spacing: 2px; margin-top: 6px; }
 
   .xmb-row { gap: 14px; margin-top: 18px; }
   .xmb-icon { width: 50px; height: 50px; font-size: 19px; border-radius: 12px; }
-  .xmb-label { font-size: 9px; letter-spacing: 1px; margin-top: 8px; }
+  .xmb-label { font-size: 10px; letter-spacing: 1px; margin-top: 8px; }
 
-  .section-label { font-size: 10px; letter-spacing: 3px; margin: 14px 0 4px; }
+  .section-label { font-size: 11px; letter-spacing: 3px; margin: 14px 0 4px; }
 
   .carousel-wrap { margin-top: 4px; padding: 0 8px 8px; }
   .carousel-stage { height: 300px; }
   .mem-slot { width: 180px; height: 245px; }
   .mem-card { padding: 14px; }
   .thumb { height: 96px; }
-  .name { font-size: 10px; height: 34px; }
+  .name { font-size: 11px; height: 34px; }
   .carousel-nav { margin-top: 10px; gap: 24px; }
   .carousel-arrow { width: 40px; height: 40px; font-size: 17px; }
   .carousel-arrow.side-left { left: 8px; }
@@ -845,7 +851,7 @@ body {
     position: static;
     background: none;
     padding: 12px 12px 18px;
-    font-size: 8px;
+    font-size: 9px;
     letter-spacing: 1px;
     flex-wrap: wrap;
     gap: 6px;
@@ -864,10 +870,10 @@ body {
     flex: 1;
     min-width: 0;
     text-align: center;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 2px;
   }
-  .back-btn { font-size: 10px; padding: 6px 12px; }
+  .back-btn { font-size: 11px; padding: 6px 12px; }
   .proj-tags { width: 100%; justify-content: center; }
 
   /* ABOUT: stack vertically, everything scrolls */
@@ -880,7 +886,7 @@ body {
   .about-left { width: 100%; }
   .avatar-large { width: 96px; height: 96px; }
   .about-right { overflow: visible; gap: 22px; }
-  .about-block p { font-size: 14px; line-height: 1.65; }
+  .about-block p { font-size: 16px; line-height: 1.65; }
 
   /* SKILLS: single column */
   .skills-layout {
@@ -888,13 +894,13 @@ body {
     padding: 22px 18px 48px;
     gap: 30px;
   }
-  .skill-group-title { font-size: 11px; margin-bottom: 18px; }
+  .skill-group-title { font-size: 12px; margin-bottom: 18px; }
   .skill-card { padding: 14px 16px; margin-bottom: 16px; }
   .skill-icon { width: 40px; height: 40px; }
   .skill-icon svg { width: 26px; height: 26px; }
-  .skill-name { font-size: 13px; }
-  .skill-spec { font-size: 13px; }
-  .usedin-list { font-size: 11.5px; }
+  .skill-name { font-size: 14px; }
+  .skill-spec { font-size: 14px; }
+  .usedin-list { font-size: 13px; }
 
   /* PROJECT: stack video above text */
   .proj-grid {
@@ -903,19 +909,19 @@ body {
     padding: 16px 18px 48px;
   }
   .proj-left { position: static; }
-  .proj-body { font-size: 14px; }
+  .proj-body { font-size: 16px; }
   .systems-grid { grid-template-columns: 1fr; }
-  .code-block code { font-size: 12px; }
+  .code-block code { font-size: 13px; }
 
   /* CONTACT */
   .contact-layout {
     padding: 36px 18px;
     justify-content: flex-start;
   }
-  .contact-intro { font-size: 15px; letter-spacing: 3px; text-align: center; }
-  .contact-sub { font-size: 12px; text-align: center; }
+  .contact-intro { font-size: 16px; letter-spacing: 3px; text-align: center; }
+  .contact-sub { font-size: 13px; text-align: center; }
   .contact-link { padding: 14px 16px; gap: 14px; }
-  .contact-link-value { font-size: 12px; word-break: break-all; }
+  .contact-link-value { font-size: 14px; word-break: break-all; }
 }
 
 /* ---- Short viewport safety (small laptops) ---- */
@@ -929,8 +935,8 @@ body {
   .hero p { font-size: 16px; margin-top: 4px; }
   .xmb-row { margin-top: 12px; }
   .xmb-icon { width: 62px; height: 62px; font-size: 25px; }
-  .xmb-label { margin-top: 8px; font-size: 13px; }
-  .section-label { margin: 10px 0 4px; font-size: 13px; }
+  .xmb-label { margin-top: 8px; font-size: 14px; }
+  .section-label { margin: 10px 0 4px; font-size: 14px; }
   .carousel-stage { height: 420px; }
   .carousel-nav { margin-top: 4px; }
   .carousel-arrow { width: 52px; height: 52px; font-size: 22px; }

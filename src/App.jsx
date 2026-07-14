@@ -41,7 +41,12 @@ export default function App() {
 
   const navigateTo = useCallback((screenId) => {
     if (screenId === 'cv') {
-      alert('CV download — add your file path here.')
+      const link = document.createElement('a')
+      link.href = import.meta.env.BASE_URL + 'Roberto-Scialpi-CV.pdf'
+      link.download = 'Roberto-Scialpi-CV.pdf'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
       return
     }
     goToScreen(screenId, true)
