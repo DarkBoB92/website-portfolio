@@ -298,6 +298,8 @@ void OpenDoorServerRpc()
     tech: 'UNITY · MR · QUEST 3',
     tags: ['RESEARCH', 'UNITY', 'MR', 'QUEST 3', '2025/26'],
     section: 'THE PROJECT',
+    thumbnail: 'images/xr-training-vr-aim.jpg',
+    thumbnailVideo: 'videos/xr-training-card-loop.mp4',
     description: 'BSc Dissertation: "Assessing the Effectiveness of Extended Reality Simulation Training for Learning a Physical Skill." A custom Mixed Reality training application in Unity 6 for Meta Quest 3, paired with a physical target system using FSRs and an Arduino Mega 2560. Pre-test/post-test study of 20 participants. Awarded First Class Honours.',
     role: "Solo researcher and developer — designed the experiment, built both artefacts (MR app + physical sensor rig), ran the study, and turned an incomplete dataset into a defensible finding.",
     systems: [
@@ -305,6 +307,15 @@ void OpenDoorServerRpc()
       { name: 'Physical Sensor Rig', desc: "Seven force-sensitive resistors wired into an Arduino Mega, one per scoring zone, with priority-ordered hit classification and a cooldown window so a single impact couldn't register twice. Designed to survive around twenty back-to-back participants, with damaged sections swappable in under two minutes." },
       { name: 'Experimental & Evaluation Design', desc: "Built the whole study from scratch: pre/post-test protocol, a weighted scoring system shared between the physical and virtual versions, and a written evaluation plan for comparing the two." },
       { name: 'Scope & Problem-Solving Calls', desc: "Dropped full MR Utility Kit room-scan anchoring once it became clear it would eat too much time for too little gain, switching to fixed Unity transforms instead. Also ran several failed rounds of physical grip mock-ups — sponge and other materials — trying to replicate recoil feel before accepting it as an open gap." },
+    ],
+    gallery: [
+      { src: 'images/xr-training-vr-aim.jpg', caption: 'In the headset — aiming the virtual launcher, modelled on the real Nerf blaster used in physical testing' },
+      { src: 'images/xr-training-vr-menu.jpg', caption: 'The training menu — participant ID selection and the three training modes (Steady, Move, Reaction)' },
+      { src: 'images/xr-training-sensor-board.jpg', caption: "Seven force-sensitive resistors wired into the target's three scoring zones, before the cardboard overlay went on" },
+      { src: 'images/xr-training-wiring-back.jpg', caption: 'The Arduino Mega and breadboard wiring on the back of the target board' },
+      { src: 'images/xr-training-finished-target.jpg', caption: 'The finished target, with the cardboard scoring-zone overlay in place' },
+      { src: 'images/xr-training-circuit-diagram.jpg', caption: "The full sensor wiring diagram — seven FSRs feeding the Arduino Mega's analogue inputs, colour-coded by scoring zone" },
+      { src: 'images/xr-training-results.jpg', caption: "The central finding: MR proficiency didn't predict physical outcome. T5 had the highest virtual proficiency and zero change; T9 had lower proficiency and the largest drop." },
     ],
     code: {
       caption: 'Sensor classification logic on the Arduino: checks zones in priority order (bullseye outward) so overlapping sensor readings from one impact resolve to a single zone, with a cooldown so one hit can\'t register twice.',
