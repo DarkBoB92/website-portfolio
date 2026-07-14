@@ -83,7 +83,7 @@ function getCatcherStyle(offset, vw) {
 }
 
 // current + setCurrent come from the parent so the position survives navigation
-export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
+export default function Carousel({ onFire, onFireAction, onNavigate, current, setCurrent }) {
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
   const [hoveredOffset, setHoveredOffset] = useState(null)
   const lastHovered = useRef(null)
@@ -98,8 +98,8 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const rotate = useCallback((dir) => {
-    playNavigate()
+  const rotate = useCallback((dir, opts = {}) => {
+    if (!opts.silent) playNavigate()
     setCurrent(c => (c + dir + TOTAL) % TOTAL)
   }, [setCurrent])
 
@@ -201,6 +201,7 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                   // Only reachable on mobile now (desktop cards are pointer-events:none)
                   if (!clickable || !mobile) return
                   if (touchMoved.current) return   // was a swipe, already handled
+                  e.stopPropagation()
                   if (!isActive) { rotate(offset > 0 ? 1 : -1) }
                   else { onFire(e.currentTarget.querySelector('.mem-card'), i) }
                 }}
@@ -256,6 +257,7 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
                     setHoveredOffset(curr => (curr === offset ? null : curr))
                   }}
                   onClick={(e) => {
+                    e.stopPropagation()
                     onFire(e.currentTarget, i)
                   }}
                 />
@@ -264,8 +266,20 @@ export default function Carousel({ onFire, onNavigate, current, setCurrent }) {
           </div>
         )}
 
-        <div className="carousel-arrow side-left" onClick={() => rotate(-1)}>‹</div>
-        <div className="carousel-arrow side-right" onClick={() => rotate(1)}>›</div>
+        <div
+          className="carousel-arrow side-left"
+          onClick={(e) => {
+            e.stopPropagation()
+            onFireAction(e.currentTarget, () => rotate(-1, { silent: true }))
+          }}
+        >‹</div>
+        <div
+          className="carousel-arrow side-right"
+          onClick={(e) => {
+            e.stopPropagation()
+            onFireAction(e.currentTarget, () => rotate(1, { silent: true }))
+          }}
+        >›</div>
       </div>
 
       <div className="carousel-nav">

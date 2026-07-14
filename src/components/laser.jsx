@@ -42,6 +42,20 @@ export function playLaser() {
   o.start(); o.stop(c.currentTime + 0.28)
 }
 
+// Light, quick tick for ambient "click anywhere" sparks — deliberately quieter and
+// shorter than playLaser so it reads as incidental fun rather than a real action.
+export function playSpark() {
+  const c = getCtx()
+  const o = c.createOscillator(), g = c.createGain()
+  o.connect(g); g.connect(c.destination)
+  o.type = 'triangle'
+  o.frequency.setValueAtTime(1400, c.currentTime)
+  o.frequency.exponentialRampToValueAtTime(700, c.currentTime + 0.06)
+  g.gain.setValueAtTime(0.06, c.currentTime)
+  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.08)
+  o.start(); o.stop(c.currentTime + 0.08)
+}
+
 export function playConfirm() {
   const c = getCtx()
   ;[0, 0.08, 0.16].forEach((t, i) => {
@@ -100,4 +114,36 @@ export function useLaser(mousePos) {
   )
 
   return { fire, LaserElements }
+}
+// Shared "deliberate fire": aim from cursor to a target element's centre,
+// laser sound, impact, confirm chime, then run whatever should happen once
+// it lands. Used anywhere a click should feel like a real, aimed shot rather
+// than the ambient click-anywhere spark (XMB icons, carousel arrows, gallery
+// arrows, project cards).
+export function useFireAt(fire, opts = {}) {
+  const { instant = false, cooldown = 1000 } = opts
+  const firingRef = useRef(false)
+  return useCallback((targetEl, onConfirmed) => {
+    if (firingRef.current) return
+    firingRef.current = true
+    const rect = targetEl.getBoundingClientRect()
+    const tx = rect.left + rect.width / 2
+    const ty = rect.top + rect.height / 2
+    playLaser()
+
+    if (instant) {
+      // Run the action right away instead of waiting for the laser to land —
+      // for things like arrows, where rapid repeat clicking needs to feel
+      // snappy. The bolt and confirm chime still play out in the background.
+      onConfirmed()
+      fire(tx, ty, () => { playConfirm() })
+      setTimeout(() => { firingRef.current = false }, cooldown)
+    } else {
+      fire(tx, ty, () => {
+        playConfirm()
+        onConfirmed()
+        setTimeout(() => { firingRef.current = false }, cooldown)
+      })
+    }
+  }, [fire, instant, cooldown])
 }

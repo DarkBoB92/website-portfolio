@@ -7,6 +7,7 @@ import ContactScreen from './components/ContactScreen.jsx'
 import ProjectScreen from './components/ProjectScreen.jsx'
 import Crosshair from './components/Crosshair.jsx'
 import Transition from './components/Transition.jsx'
+import { useLaser, playSpark } from './components/laser.jsx'
 import { projects } from './data/projects.js'
 
 export default function App() {
@@ -15,6 +16,30 @@ export default function App() {
   const [transitioning, setTransitioning] = useState(false)
   const [carouselIndex, setCarouselIndex] = useState(0) // persists across navigation
   const transitionRef = useRef(null)
+
+  // Global laser system — mounted once here so it's available on every screen,
+  // not just Home. Deliberate fires (XMB icons, project cards, carousel arrows)
+  // call `fire` directly with a real travel distance from cursor to target.
+  // Everything else falls through to the ambient "click anywhere" spark below.
+  const mousePos = useRef({ x: -100, y: -100 })
+  const { fire, LaserElements } = useLaser(mousePos)
+
+  useEffect(() => {
+    const move = (e) => { mousePos.current = { x: e.clientX, y: e.clientY } }
+    document.addEventListener('mousemove', move)
+    return () => document.removeEventListener('mousemove', move)
+  }, [])
+
+  // Fun-factor: any click that isn't already claimed by a deliberate fire
+  // (those call stopPropagation) gets a quick, quiet spark right where you clicked.
+  useEffect(() => {
+    const onClick = (e) => {
+      playSpark()
+      fire(e.clientX, e.clientY, () => {})
+    }
+    document.addEventListener('click', onClick)
+    return () => document.removeEventListener('click', onClick)
+  }, [fire])
 
   /* Run the fade-to-black, swap the screen, fade back.
      `pushHistory` controls whether we add a browser history entry
@@ -77,7 +102,7 @@ export default function App() {
     if (currentScreen === 'skills') return <SkillsScreen onBack={navigateBack} />
     if (currentScreen === 'contact') return <ContactScreen onBack={navigateBack} />
     if (typeof currentScreen === 'number') {
-      return <ProjectScreen project={projects[currentScreen]} onBack={navigateBack} />
+      return <ProjectScreen project={projects[currentScreen]} onBack={navigateBack} fire={fire} />
     }
     return null
   }
@@ -85,6 +110,7 @@ export default function App() {
   return (
     <>
       <Crosshair />
+      {LaserElements}
       <Transition ref={transitionRef} />
       {!booted && <Boot onDone={() => setBooted(true)} />}
       {booted && (
@@ -92,6 +118,7 @@ export default function App() {
           {currentScreen === null && (
             <HomeScreen
               onNavigate={navigateTo}
+              fire={fire}
               carouselIndex={carouselIndex}
               setCarouselIndex={setCarouselIndex}
             />

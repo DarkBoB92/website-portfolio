@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
+import { useFireAt } from './laser.jsx'
 
 const AUTO_ADVANCE_MS = 6000
 
-export default function ImageGallery({ images }) {
+export default function ImageGallery({ images, fire }) {
   const [index, setIndex] = useState(0)
   const timerRef = useRef(null)
+  const fireAt = useFireAt(fire, { instant: true, cooldown: 150 })
 
   // Restart the auto-advance timer — called on mount and after any manual navigation,
   // so clicking an arrow doesn't fight with an auto-advance that's about to fire.
@@ -46,12 +48,18 @@ export default function ImageGallery({ images }) {
             <button
               className="img-gallery-arrow left"
               aria-label="Previous image"
-              onClick={() => goTo(index - 1)}
+              onClick={(e) => {
+                e.stopPropagation()
+                fireAt(e.currentTarget, () => goTo(index - 1))
+              }}
             >‹</button>
             <button
               className="img-gallery-arrow right"
               aria-label="Next image"
-              onClick={() => goTo(index + 1)}
+              onClick={(e) => {
+                e.stopPropagation()
+                fireAt(e.currentTarget, () => goTo(index + 1))
+              }}
             >›</button>
           </>
         )}

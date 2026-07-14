@@ -1,7 +1,7 @@
 
 import ImageGallery from './ImageGallery'
 
-export default function ProjectScreen({ project, onBack }) {
+export default function ProjectScreen({ project, onBack, fire }) {
   if (!project) return null
 
   return (
@@ -42,7 +42,7 @@ export default function ProjectScreen({ project, onBack }) {
                   />
                 )
               ) : project.gallery && project.gallery.length > 0 ? (
-                <ImageGallery images={project.gallery} />
+                <ImageGallery images={project.gallery} fire={fire} />
               ) : (
                 <div className="video-placeholder">[ VIDEO PLACEHOLDER ]</div>
               )}

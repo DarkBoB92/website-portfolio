@@ -41,6 +41,7 @@ export default function XMBRow({ onFire }) {
           }}
           onMouseLeave={() => { lastHovered.current = null }}
           onClick={(e) => {
+            e.stopPropagation()
             const icon = e.currentTarget.querySelector('.xmb-icon')
             onFire(icon, id)
           }}

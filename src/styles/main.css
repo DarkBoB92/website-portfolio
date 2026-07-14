@@ -12,6 +12,10 @@ body {
   flex-direction: column;
 }
 
+/* Step aside for native video controls and fullscreen — see Crosshair.jsx */
+body.native-cursor { cursor: auto; }
+body.native-cursor video { cursor: auto; }
+
 /* ---- Crosshair ---- */
 .crosshair {
   position: fixed;
