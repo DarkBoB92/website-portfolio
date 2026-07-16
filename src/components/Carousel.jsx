@@ -8,9 +8,36 @@ const CARD_H = 340
 // Must match .carousel-3d / .carousel-stage perspective in main.css
 const PERSPECTIVE = 1600
 
+const CARD_RATIO = CARD_H / CARD_W  // 1.36 — mobile cards keep this same proportion
+
+// Rough vertical budget consumed by everything above/below the carousel
+// stage itself (topbar, hero, XMB row, section label, nav arrows, dots,
+// status strip). Deliberately conservative — better to slightly undersize
+// the card than to force scrolling on a short screen.
+function chromeHeight(vh) {
+  return vh <= 500 ? 190 : 280
+}
+
+// The real fix for portrait vs landscape: compute a size from *width*
+// (for narrow screens) and a size from *height* (for short screens),
+// then use whichever one is smaller. A landscape phone is wide but short,
+// so the height-based number wins there; a portrait phone is narrow but
+// tall, so the width-based number wins there. Same formula handles both
+// instead of guessing per-orientation.
+function getMobileCardSize(vw, vh) {
+  const wFromWidth = vw <= 640 ? 240 : 290
+  const hFromWidth = wFromWidth * CARD_RATIO
+
+  const availH = Math.max(160, vh - chromeHeight(vh))
+  const hFromHeight = Math.min(hFromWidth, availH)
+  const wFromHeight = hFromHeight / CARD_RATIO
+
+  if (wFromHeight < wFromWidth) return { w: Math.round(wFromHeight), h: Math.round(hFromHeight) }
+  return { w: wFromWidth, h: Math.round(hFromWidth) }
+}
+
 function getConfig(vw) {
   if (vw >= 1000) return { radius: 780, mobile: false }
-  if (vw >= 640)  return { radius: vw * 0.6, mobile: false }
   return { radius: vw * 0.62, mobile: true }
 }
 
@@ -25,13 +52,16 @@ function get3D(offset, radius) {
   return { angle, rad, z, x, ry }
 }
 
-function getRingTransform(offset, vw) {
+function getRingTransform(offset, vw, vh) {
   const { radius, mobile } = getConfig(vw)
 
   if (mobile) {
+    const { w: cardW } = getMobileCardSize(vw, vh)
     if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
-    if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw * 0.6}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
-    return { t: `translateX(-50%) translateY(-50%) translateX(${offset * vw}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
+    if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * cardW * 0.86}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
+    // Comfortably off the visible strip regardless of viewport width — exact
+    // distance barely matters since these are also display:none'd below.
+    return { t: `translateX(-50%) translateY(-50%) translateX(${offset * (vw + cardW)}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
   }
 
   const { z, x, ry } = get3D(offset, radius)
@@ -85,6 +115,7 @@ function getCatcherStyle(offset, vw) {
 // current + setCurrent come from the parent so the position survives navigation
 export default function Carousel({ onFire, onFireAction, onNavigate, current, setCurrent }) {
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
+  const [vh, setVh] = useState(typeof window !== 'undefined' ? window.innerHeight : 800)
   const [hoveredOffset, setHoveredOffset] = useState(null)
   const lastHovered = useRef(null)
   const touchStartX = useRef(null)
@@ -93,9 +124,17 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
   const wheelLastStep = useRef(0)
 
   useEffect(() => {
-    const onResize = () => setVw(window.innerWidth)
+    const onResize = () => { setVw(window.innerWidth); setVh(window.innerHeight) }
+    // Some mobile browsers fire orientationchange BEFORE the new
+    // innerWidth/innerHeight are available, so read now and again shortly
+    // after to catch the settled values either way.
+    const onOrientation = () => { onResize(); setTimeout(onResize, 300) }
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onOrientation)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onOrientation)
+    }
   }, [])
 
   const rotate = useCallback((dir, opts = {}) => {
@@ -128,6 +167,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
   }
 
   const mobile = getConfig(vw).mobile
+  const mobileSize = mobile ? getMobileCardSize(vw, vh) : null
 
   // Wheel navigation: scroll down (or trackpad-right) = next, scroll up = previous.
   //
@@ -160,6 +200,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
     <div className="carousel-wrap" onWheel={onWheel}>
       <div
         className="carousel-stage carousel-3d"
+        style={mobileSize ? { height: `${Math.round(mobileSize.h * 1.15)}px` } : undefined}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -168,9 +209,14 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
           {projects.map((proj, i) => {
             const rawOffset = ((i - current) % TOTAL + TOTAL) % TOTAL
             const offset = rawOffset > TOTAL / 2 ? rawOffset - TOTAL : rawOffset
-            const { t, opacity, z, clickable } = getRingTransform(offset, vw)
+            const { t, opacity, z, clickable } = getRingTransform(offset, vw, vh)
             const isActive = offset === 0
             const isHovered = !mobile && hoveredOffset === offset
+            // Belt-and-braces: overflow:hidden can fail to clip 3D-transformed
+            // descendants on some mobile browsers (a known rendering quirk,
+            // especially visible during pinch-zoom). Rather than depend on
+            // that clipping, fully remove cards that aren't meant to be seen.
+            const isHidden = mobile && !clickable
 
             return (
               <div
@@ -178,11 +224,14 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
                 className="mem-slot"
                 style={{
                   position: 'absolute',
-                  top: '42%',
+                  top: mobile ? '50%' : '42%',
                   left: '50%',
+                  width: mobileSize ? `${mobileSize.w}px` : undefined,
+                  height: mobileSize ? `${mobileSize.h}px` : undefined,
                   transform: t,
                   opacity,
                   zIndex: isHovered ? z + 500 : z,
+                  display: isHidden ? 'none' : undefined,
                   // Desktop: catchers below handle all interaction, cards are purely visual.
                   // Mobile: flat 2D transforms hit-test fine natively, keep it simple.
                   pointerEvents: mobile && clickable ? 'auto' : 'none',
