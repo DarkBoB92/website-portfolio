@@ -10,6 +10,18 @@ body {
   cursor: none;
   display: flex;
   flex-direction: column;
+  /* Disable Android Chrome "font boosting", which silently inflates text
+     on blocks it judges non-mobile-optimised and desyncs sized layouts */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Second, unconditional autosizer flag: Blink's text booster skips any
+   block with an explicit max-height. Harmless (a million px caps nothing
+   real) and it's the documented fallback for the cases where the
+   text-size-adjust property alone is ignored. */
+.screen p, .screen h1, .screen h2, .screen h3, .screen span, .screen li {
+  max-height: 1000000px;
 }
 
 /* ---- Crosshair ---- */
@@ -92,9 +104,10 @@ body {
 .boot-logo {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 34px;
+  font-size: clamp(20px, 5.5vw, 34px);
   color: #fff;
-  letter-spacing: 8px;
+  letter-spacing: 0.24em;
+  padding: 0 14px;
   opacity: 0;
   transform: scale(2.6) rotateY(85deg);
   text-shadow: 2px 0 0 rgba(255,60,90,0.6), -2px 0 0 rgba(60,200,255,0.6), 0 0 30px rgba(140,200,255,0.4);
@@ -108,8 +121,12 @@ body {
 .boot-sub {
   margin-top: 18px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 18px;
-  letter-spacing: 6px;
+  /* Real text + letter-spacing, NOT spaces between letters (the previous
+     markup made every letter its own word, so narrow screens wrapped
+     mid-word: "PROGRAMM / ER"). nowrap + clamp keeps it one line always. */
+  font-size: clamp(12px, 2.4vw, 18px);
+  letter-spacing: 0.55em;
+  white-space: nowrap;
   color: #6fa8dc;
   opacity: 0;
   animation: fadeIn 0.5s forwards 1.4s;
@@ -156,9 +173,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 36px;
+  padding: clamp(8px, 1.6vh, 16px) clamp(14px, 3vw, 36px);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 16px;
+  font-size: clamp(11px, 1.4vw, 16px);
   color: #7fa8d0;
   letter-spacing: 1px;
   flex-shrink: 0;
@@ -166,7 +183,7 @@ body {
 .profile-chip { display: flex; align-items: center; gap: 12px; }
 .avatar {
   position: relative;
-  width: 36px; height: 36px;
+  width: clamp(26px, 3vw, 36px); height: clamp(26px, 3vw, 36px);
   border-radius: 50%;
   background: linear-gradient(135deg, #3a8bff, #5be0c9);
   overflow: hidden;
@@ -189,18 +206,18 @@ body {
 .hero h1 {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 46px;
+  font-size: clamp(22px, 4.6vw, 46px);
   margin: 0;
-  letter-spacing: 7px;
+  letter-spacing: 0.15em;
   background: linear-gradient(90deg, #cfe6ff, #8fd9ff 40%, #5be0c9);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .hero p {
-  font-size: 18px;
+  font-size: clamp(10px, 1.7vw, 18px);
   color: #7fa8d0;
-  letter-spacing: 4px;
+  letter-spacing: 0.22em;
   margin: 6px 0 0;
 }
 
@@ -210,8 +227,8 @@ body {
   z-index: 2;
   display: flex;
   justify-content: center;
-  gap: 48px;
-  margin-top: 18px;
+  gap: clamp(16px, 4.5vw, 48px);
+  margin-top: clamp(8px, 1.8vh, 18px);
   padding: 0 20px;
   flex-shrink: 0;
 }
@@ -223,14 +240,14 @@ body {
   position: relative;
 }
 .xmb-icon {
-  width: 72px; height: 72px;
-  border-radius: 16px;
+  width: clamp(46px, 7vw, 72px); height: clamp(46px, 7vw, 72px);
+  border-radius: clamp(10px, 1.6vw, 16px);
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(120,170,220,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34px;
+  font-size: clamp(20px, 3.3vw, 34px);
   line-height: 1;
   transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -242,9 +259,9 @@ body {
   box-shadow: 0 10px 30px rgba(91,224,201,0.25);
 }
 .xmb-label {
-  margin-top: 10px;
-  font-size: 14px;
-  letter-spacing: 2px;
+  margin-top: clamp(5px, 1vh, 10px);
+  font-size: clamp(8px, 1.3vw, 14px);
+  letter-spacing: 0.15em;
   color: #6fa0c8;
   opacity: 0;
   transform: translateY(4px);
@@ -256,8 +273,8 @@ body {
 /* ---- Section label ---- */
 .section-label {
   font-family: 'Orbitron', sans-serif;
-  font-size: 15px;
-  letter-spacing: 6px;
+  font-size: clamp(10px, 1.5vw, 15px);
+  letter-spacing: 0.4em;
   color: #5a8aaa;
   margin: 14px 0 6px;
   text-align: center;
@@ -427,12 +444,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 18px;
-  padding: 14px 32px;
+  gap: clamp(8px, 1.6vw, 18px);
+  padding: clamp(8px, 1.4vh, 14px) clamp(12px, 3vw, 32px);
   background: linear-gradient(to top, rgba(0,8,20,0.9), transparent);
   font-family: 'Orbitron', sans-serif;
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: clamp(8px, 1vw, 12px);
+  letter-spacing: 0.16em;
   color: #2a5070;
 }
 .status-dot { width: 5px; height: 5px; border-radius: 50%; background: #2a5070; }
@@ -449,40 +466,45 @@ body {
 }
 .screen-topbar {
   position: relative;
-  display: flex;
-  justify-content: space-between;
+  /* Grid, not absolute centring: back / title / tags each own a column,
+     so they NEGOTIATE space instead of painting over each other. Equal
+     1fr side columns keep the title truly centred; min-width:0 lets it
+     shrink and ellipsize when the tag chips need more room. */
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: center;
-  padding: 18px 36px;
+  column-gap: 12px;
+  padding: clamp(10px, 1.8vh, 18px) clamp(14px, 3vw, 36px);
   border-bottom: 1px solid rgba(91,224,201,0.1);
   flex-shrink: 0;
 }
+.screen-topbar > :first-child { justify-self: start; }
+.screen-topbar > :last-child { justify-self: end; }
 .back-btn {
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
-  letter-spacing: 2px;
+  font-size: clamp(9px, 1.2vw, 13px);
+  letter-spacing: 0.15em;
   color: #5be0c9;
   background: none;
   border: 1px solid rgba(91,224,201,0.3);
   border-radius: 6px;
-  padding: 10px 18px;
+  padding: clamp(6px, 1.1vh, 10px) clamp(10px, 1.7vw, 18px);
   cursor: none;
   transition: background 0.2s, border-color 0.2s;
 }
 .back-btn:hover { background: rgba(91,224,201,0.1); border-color: #5be0c9; }
 .screen-title {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
-  letter-spacing: 6px;
+  font-size: clamp(10px, 1.7vw, 16px);
+  letter-spacing: 0.35em;
   color: #cfe6ff;
   white-space: nowrap;
   pointer-events: none;
-  /* Long titles (e.g. POTATO BONANZA EXTRAVAGANZA) truncate instead of
-     running underneath the back button / tag chips */
-  max-width: 46%;
+  text-align: center;
+  /* Grid cell handles centring; these make long titles truncate with an
+     ellipsis instead of running under the back button / tag chips */
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -526,8 +548,8 @@ body {
    overflows (centered overflow gets clipped above the scroll start). */
 .about-right > :first-child { margin-top: auto; }
 .about-right > :last-child { margin-bottom: auto; }
-.about-block-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 12px; }
-.about-block p { font-size: 19px; color: #a0c0dc; line-height: 1.75; margin: 0; }
+.about-block-title { font-family: 'Orbitron', sans-serif; font-size: clamp(11px, 1.4vw, 13px); letter-spacing: 0.38em; color: #5be0c9; margin-bottom: 12px; }
+.about-block p { font-size: clamp(13px, 1.9vw, 19px); color: #a0c0dc; line-height: 1.75; margin: 0; }
 
 /* ---- Skills ---- */
 .skills-layout {
@@ -610,12 +632,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 18px;
   padding: 40px;
+  overflow-y: auto;
 }
-.contact-intro { font-family: 'Orbitron', sans-serif; font-size: 30px; letter-spacing: 6px; color: #cfe6ff; }
-.contact-sub { font-size: 18px; color: #6fa8d0; letter-spacing: 2px; margin-bottom: 28px; }
+/* Centres when content is short, but still scrollable to the top when it
+   overflows (justify-content:center clips centered overflow — same bug
+   About had) */
+.contact-layout > :first-child { margin-top: auto; }
+.contact-layout > :last-child { margin-bottom: auto; }
+.contact-intro { font-family: 'Orbitron', sans-serif; font-size: clamp(16px, 3vw, 30px); letter-spacing: 0.2em; color: #cfe6ff; }
+.contact-sub { font-size: clamp(11px, 1.8vw, 18px); color: #6fa8d0; letter-spacing: 2px; margin-bottom: 28px; }
 .contact-links { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 680px; }
 .contact-link {
   display: flex;
@@ -632,7 +659,7 @@ body {
 .contact-link:hover { border-color: #5be0c9; background: rgba(91,224,201,0.07); transform: translateX(6px); }
 .contact-link-icon { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #5be0c9; width: 44px; text-align: center; flex-shrink: 0; }
 .contact-link-label { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px; color: #5be0c9; margin-bottom: 6px; }
-.contact-link-value { font-size: 18px; color: #a0c0dc; letter-spacing: 1px; }
+.contact-link-value { font-size: clamp(12px, 1.8vw, 18px); color: #a0c0dc; letter-spacing: 1px; }
 
 /* ---- Project screens ---- */
 .proj-scroll {
@@ -809,8 +836,8 @@ body {
   white-space: pre;
 }
 
-.proj-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tag { font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 1px; color: #5be0c9; border: 1px solid rgba(91,224,201,0.35); border-radius: 4px; padding: 3px 8px; }
+.proj-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.tag { font-family: 'Orbitron', sans-serif; white-space: nowrap; font-size: 9px; letter-spacing: 1px; color: #5be0c9; border: 1px solid rgba(91,224,201,0.35); border-radius: 4px; padding: 3px 8px; }
 .proj-links { display: flex; gap: 12px; }
 .proj-link {
   font-family: 'Orbitron', sans-serif;
@@ -906,22 +933,29 @@ body {
   }
 
   /* Screens: header wraps, content scrolls */
+  /* Keep the base grid: title stays truly centred on the VIEWPORT
+     (a flex row centred it only within the leftover space beside the
+     back button). Tags drop to their own centred second row. */
   .screen-topbar {
-    flex-wrap: wrap;
     padding: 10px 14px;
+    column-gap: 10px;
     row-gap: 8px;
   }
   .screen-title {
     font-size: 10px;
     letter-spacing: 2px;
-    max-width: 55%;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .back-btn { font-size: 9px; padding: 5px 10px; }
-  .proj-tags { width: 100%; justify-content: center; }
+  .proj-tags { grid-column: 1 / -1; justify-self: center; justify-content: center; }
+  .tag { font-size: 7.5px; padding: 2px 6px; }
 
   /* ABOUT: stack vertically, everything scrolls */
+  /* Plus a hard guarantee against horizontal overflow: no layer may
+     exceed the viewport, so content can neither clip at the right edge
+     nor centre itself on a phantom wider box. */
+  .screen { overflow-x: hidden; }
+  .about-layout, .about-left, .about-right, .about-block,
+  .contact-layout, .contact-links { max-width: 100%; min-width: 0; }
   .about-layout {
     flex-direction: column;
     padding: 22px 18px 48px;
@@ -978,19 +1012,13 @@ body {
 
   /* Fixed shell pieces paint above the card column (cards are z 5–30) */
   .topbar { z-index: 60; }
-  .hero { z-index: 60; }
-  .section-label { z-index: 60; }
+  .section-label { z-index: 60; margin: 8px 0 2px; }
 
-  /* Soft dark halo behind the title so it stays readable when a faint
-     card passes underneath it */
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: -14px -10px -18px;
-    background: radial-gradient(ellipse 75% 100% at 50% 45%, rgba(0,8,20,0.88), transparent 78%);
-    z-index: -1;
-    pointer-events: none;
-  }
+  /* Identity lives in the topbar chip (photo + name) on portrait — the
+     big hero here duplicated the boot screen AND the chip while eating
+     the scarcest resource on a phone: vertical space. Freed space flows
+     straight into bigger cards via the measured stage sizing. */
+  .hero { display: none; }
 
   /* XMB icons: vertical dock, centred on the left edge */
   .xmb-row {
@@ -1029,8 +1057,12 @@ body {
   /* Arrows are hidden on phones (see .carousel-arrow { display: none }
      above) — swipe up/down handles navigation instead. */
 
-  /* The stage fills all remaining height; JS sets height:100% inline too */
-  .carousel-wrap { padding: 0; }
+  /* The stage fills all remaining height; JS sets height:100% inline too.
+     Bottom padding reserves the fixed status strip's band: the strip is
+     out-of-flow, so without this the MEASURED stage extends underneath it
+     and the +1 card's text lands on the honours line. ResizeObserver
+     measures the content box, so padding shrinks the measurement too. */
+  .carousel-wrap { padding: 0 0 calc(46px + env(safe-area-inset-bottom, 0px)); }
   .carousel-stage { height: 100%; }
 
   /* Status strip pins back to the bottom as part of the fixed shell,
@@ -1071,14 +1103,14 @@ body {
 
    In CSS pixels a landscape phone can be 900–1200px wide, so width-based
    queries misread it as a desktop; genuinely short viewports are the
-   honest signal. (JS-side, getConfig() in Carousel.jsx independently
-   rejects the desktop ring for anything under 700px tall — this query
-   just compacts the chrome further for the REALLY short screens.)
+   honest signal. Threshold 699px mirrors getConfig() in Carousel.jsx
+   exactly: whenever JS switches to the strip, this chrome comes with it.
+   A nested tier below tightens further for really short (<=550) screens.
 
    Layout: horizontal card strip (mobile mode in JS), hard-compacted
    chrome, and the same locked shell as portrait — page never scrolls,
    no pull-to-refresh, no pinch state left to leak back into portrait. */
-@media (max-height: 550px) and (orientation: landscape) {
+@media (max-height: 699px) and (orientation: landscape) {
 
   html, body {
     height: 100vh;
@@ -1100,11 +1132,14 @@ body {
   .avatar { width: 24px; height: 24px; }
 
   .hero { padding: 0 20px; }
-  .hero h1 { font-size: 17px; letter-spacing: 3px; }
-  .hero p { font-size: 9px; letter-spacing: 3px; margin-top: 2px; }
+  .hero h1 { font-size: clamp(17px, 4.2vh, 26px); letter-spacing: 3px; }
+  .hero p { font-size: clamp(9px, 1.9vh, 12px); letter-spacing: 3px; margin-top: 2px; }
 
   .xmb-row { gap: 14px; margin-top: 4px; }
-  .xmb-icon { width: 44px; height: 44px; font-size: 18px; border-radius: 9px; }
+  .xmb-icon {
+    width: clamp(44px, 9.5vh, 58px); height: clamp(44px, 9.5vh, 58px);
+    font-size: clamp(18px, 4.2vh, 26px); border-radius: 9px;
+  }
   /* No hover on touch — keep the names visible under the icons, like portrait */
   .xmb-label { font-size: 7px; letter-spacing: 1px; margin-top: 4px; }
 
@@ -1140,10 +1175,11 @@ body {
      fixes lived only under max-width:640px, which a 900px-wide landscape
      phone never matches. Wrapping header, and single scrollable columns
      instead of desktop layouts that assumed ~700px of height. */
-  .screen-topbar { flex-wrap: wrap; padding: 8px 14px; row-gap: 6px; }
-  .screen-title { font-size: 11px; letter-spacing: 2px; max-width: 50%; }
+  .screen-topbar { padding: 8px 14px; column-gap: 10px; row-gap: 6px; }
+  .screen-title { font-size: 11px; letter-spacing: 2px; }
   .back-btn { font-size: 9px; padding: 5px 10px; }
-  .proj-tags { width: 100%; justify-content: center; }
+  .proj-tags { grid-column: 1 / -1; justify-self: center; justify-content: center; }
+  .tag { font-size: 7.5px; padding: 2px 6px; }
 
   .about-layout { flex-direction: column; padding: 16px 26px 40px; gap: 18px; overflow-y: auto; }
   .about-left { width: 100%; }

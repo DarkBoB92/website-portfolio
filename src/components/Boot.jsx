@@ -9,7 +9,7 @@ export default function Boot({ onDone }) {
   return (
     <div className="boot">
       <div className="boot-logo">ROBERTO SCIALPI</div>
-      <div className="boot-sub">G A M E &nbsp; P R O G R A M M E R</div>
+      <div className="boot-sub">GAME PROGRAMMER</div>
       <div className="boot-bar-frame">
         <div className="boot-bar-fill" />
       </div>

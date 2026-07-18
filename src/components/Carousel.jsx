@@ -10,11 +10,6 @@ const PERSPECTIVE = 1600
 
 const CARD_RATIO = CARD_H / CARD_W  // 1.36 — mobile cards keep this same proportion
 
-// Strips at least this wide render faded ±2 neighbours at the edges
-// instead of empty gutters. 840 rather than a rounder 900 so typical
-// landscape phones (~850–920 CSS px wide) qualify.
-const WIDE_STRIP_MIN = 840
-
 // Rough vertical budget consumed by everything above/below the carousel
 // stage itself. Used only for the very first paint, before the real
 // available height has been measured off the actual DOM (see wrapAvailH
@@ -48,14 +43,21 @@ function getConfig(vw, vh) {
 
 // Card size for the vertical (portrait) column. Width is whatever fits
 // between the icon dock (left) and the dot rail (right); height is then
-// capped so the active card plus its peeking neighbours sit comfortably
-// inside the locked, non-scrolling viewport.
-function getPortraitCardSize(vw, vh) {
-  const w = Math.min(250, vw - 132)
-  const h = Math.round(w * CARD_RATIO)
-  const maxH = Math.round(vh * 0.40)
-  if (h > maxH) return { w: Math.round(maxH / CARD_RATIO), h: maxH }
-  return { w, h }
+// capped twice: by a share of the viewport, and — the important one — by
+// the MEASURED stage height, so that the ±1 neighbour cards stay fully
+// inside the stage. (±1 outer edge sits at spacing 0.78h + half of the
+// 0.74-scaled card = 1.15h from centre; keeping 1.15h within half the
+// measured stage is what stops neighbours sliding up over the title and
+// down under the status strip on shorter phones.)
+function getPortraitCardSize(vw, vh, measuredAvailH) {
+  const w0 = Math.min(250, vw - 132)
+  let h = Math.round(w0 * CARD_RATIO)
+  const capVh = Math.round(vh * 0.40)
+  const capStage = measuredAvailH != null
+    ? Math.floor((measuredAvailH / 2 - 12) / 1.15)
+    : capVh
+  h = Math.min(h, capVh, capStage)
+  return { w: Math.round(h / CARD_RATIO), h }
 }
 
 // The real fix for portrait vs landscape: compute a size from *width*
@@ -119,7 +121,7 @@ function getRingTransform(offset, vw, vh, portrait, measuredAvailH) {
   // depth. They slide UNDER the hero / status strip, which sit on a
   // higher layer, so the title always stays readable.
   if (portrait) {
-    const { h: cardH } = getPortraitCardSize(vw, vh)
+    const { h: cardH } = getPortraitCardSize(vw, vh, measuredAvailH)
     if (offset === 0) {
       return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
     }
@@ -134,17 +136,20 @@ function getRingTransform(offset, vw, vh, portrait, measuredAvailH) {
 
   if (mobile) {
     const { w: cardW } = getMobileCardSize(vw, vh, measuredAvailH)
-    const wide = vw >= WIDE_STRIP_MIN
-    // Narrow strips keep the tight overlapped look (0.86 card-widths apart).
-    // Wide strips spread the three main cards across ~60% of the screen so
-    // landscape phones don't show a huddle in the middle of empty gutters.
-    const s1 = wide ? Math.min(cardW * 1.7, vw * 0.30) : cardW * 0.86
+    // Any landscape strip spreads: cards there are height-limited (small),
+    // so a fixed 0.86-card spacing left them huddled mid-screen with empty
+    // gutters — a width threshold missed smaller phones entirely (640-823px
+    // landscape). Orientation is the right signal: wide-and-short means
+    // there's horizontal room to use. Portrait-ish strips (tablets held
+    // upright) keep the tight overlapped look.
+    const spread = vw > vh
+    const s1 = spread ? Math.min(cardW * 1.7, vw * 0.30) : cardW * 0.86
     if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
     if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${Math.sign(offset) * s1}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
-    // Wide strips also get faded ±2 depth cards straddling the screen edges,
-    // echoing the desktop ring. (Distance is FROM CENTRE — a previous version
-    // multiplied by the raw offset of ±2 and landed them fully offscreen.)
-    if (Math.abs(offset) === 2 && wide) {
+    // Spread strips also get faded ±2 depth cards straddling the screen
+    // edges, echoing the desktop ring. (Distance is FROM CENTRE — a previous
+    // version multiplied by the raw offset of ±2, landing them offscreen.)
+    if (Math.abs(offset) === 2 && spread) {
       const s2 = Math.min(s1 + cardW * 0.8, vw / 2 + cardW * 0.2)
       return { t: `translateX(-50%) translateY(-50%) translateX(${Math.sign(offset) * s2}px) scale(0.62)`, opacity: 0.25, z: 12, clickable: false }
     }
@@ -199,6 +204,66 @@ function getCatcherStyle(offset, vw, vh) {
     pointerEvents: 'auto',
     cursor: 'none',
   }
+}
+
+// One persistent element per card: a video paints its MID-POINT frame as
+// the resting state, and the same element plays when the card is the
+// spotlight — active on mobile, active or hovered on desktop. Applies
+// identically to the desktop ring and both mobile modes.
+//
+// Mid-point, not first frame: these videos open with a fade-in, so frame
+// one is a black square. The middle is representative gameplay. Playback
+// still starts from 0 so the designed fade-in intro is preserved, and
+// pausing re-seeks to the middle so the resting state is always the same
+// frame. Image-only projects (no video) just show their thumbnail.
+function CardThumb({ proj, playing }) {
+  const videoRef = useRef(null)
+
+  const seekToMiddle = (v) => {
+    if (v && v.duration && isFinite(v.duration)) {
+      try { v.currentTime = v.duration / 2 } catch { /* not seekable yet */ }
+    }
+  }
+
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (playing) {
+      // From the top, so the fade-in intro plays as designed
+      try { v.currentTime = 0 } catch { /* not seekable yet */ }
+      const p = v.play()
+      if (p && p.catch) p.catch(() => {})   // autoplay rejection isn't fatal
+    } else {
+      v.pause()
+      seekToMiddle(v)
+    }
+  }, [playing])
+
+  if (proj.thumbnailVideo) {
+    return (
+      <video
+        ref={videoRef}
+        className="thumb-img"
+        src={import.meta.env.BASE_URL + proj.thumbnailVideo}
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        onLoadedMetadata={(e) => { if (!playing) seekToMiddle(e.currentTarget) }}
+      />
+    )
+  }
+  if (proj.thumbnail) {
+    return (
+      <img
+        className="thumb-img"
+        src={import.meta.env.BASE_URL + proj.thumbnail}
+        alt=""
+        loading="lazy"
+      />
+    )
+  }
+  return null
 }
 
 // current + setCurrent come from the parent so the position survives navigation
@@ -258,7 +323,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
 
   const portrait = isPortrait(vw, vh)
   const mobile = getConfig(vw, vh).mobile
-  const cardSize = portrait ? getPortraitCardSize(vw, vh)
+  const cardSize = portrait ? getPortraitCardSize(vw, vh, wrapAvailH)
                  : mobile   ? getMobileCardSize(vw, vh, wrapAvailH)
                  : null
 
@@ -351,8 +416,8 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
             // that clipping, fully remove cards that aren't meant to be seen.
             // Portrait keeps the ±2 "depth" cards visible (very faint), so
             // only |offset| >= 3 is culled there.
-            const wideStrip = mobile && !portrait && vw >= WIDE_STRIP_MIN
-            const isHidden = (portrait || wideStrip) ? Math.abs(offset) >= 3 : (mobile && !clickable)
+            const spreadStrip = mobile && !portrait && vw > vh
+            const isHidden = (portrait || spreadStrip) ? Math.abs(offset) >= 3 : (mobile && !clickable)
 
             return (
               <div
@@ -393,26 +458,8 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
               >
                 <div className={`mem-card${isActive ? ' active' : ''}${clickable ? ' front' : ''}${isHovered ? ' hovered' : ''}`}>
                   <div className="thumb">
-                  {proj.thumbnailVideo ? (
-                    <video
-                      className="thumb-img"
-                      src={import.meta.env.BASE_URL + proj.thumbnailVideo}
-                      poster={proj.thumbnail ? import.meta.env.BASE_URL + proj.thumbnail : undefined}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                    />
-                  ) : proj.thumbnail ? (
-                    <img
-                      className="thumb-img"
-                      src={import.meta.env.BASE_URL + proj.thumbnail}
-                      alt=""
-                      loading="lazy"
-                    />
-                  ) : null}
-                </div>
+                    <CardThumb proj={proj} playing={isActive || isHovered} />
+                  </div>
                   <p className="name">{proj.name}</p>
                   <p className="meta">{proj.meta}</p>
                   <p className="tech">{proj.tech}</p>
