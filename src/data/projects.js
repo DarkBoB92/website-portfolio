@@ -27,7 +27,7 @@ if (spawnedEnemies.Count == 0 && spawnEnemies.Count == 0)
 }`,
     },
     journey: 'My first group project, and the one where I became the team\'s go-to for untangling broken code — a running joke that became reality, since a fresh pair of eyes usually found the flaw. I owned the migration to Unity\'s new Input System after a teammate had started on the old one: the hard part was keeping two input systems alive in the same build, wiring the menu flow, and adapting movement and shooting to the isometric camera. I built the shooting, weapon and power-up systems around it, and took on the debugging nobody else could crack — including a spawner that froze when enemies weren\'t cleared from its list, and a rest-break coroutine that skipped waves by running two frames early. The sharpest lesson came from version control: with the whole team new to Git, a teammate renamed and moved a script onto their own branch, and after a clean merge every Unity reference pointing to it silently broke. Untangling that cost me an afternoon — and taught me more about repositories than any tutorial could.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/PotatoBonanzaExtravaganza',
     itch: null,
   },
   {
@@ -60,7 +60,7 @@ if (spell.element == door.element)
     door.Open();`,
     },
     journey: 'This is the project that set my programming style — the baseline I have built from ever since. Coming straight off my first group game, where the shared build ended up with two competing health systems, I went solo here determined to do it properly: write each system once, cleanly, so it is easy to change later. That produced a universal Health component any object can use, and two abstract parent classes — Enemy and Collectible — with Melee/Ranged and Key/Potion/PowerGem inheriting and overriding from them. The design decision I am most satisfied with is the SpellType namespace: rather than scatter the element enum across scripts, I gave every system — spell casting, damage, and the puzzle-door logic — a single shared source of truth, so extending the elements later meant touching one file, not hunting through many. It was the first time architecture felt deliberate rather than incidental, and everything I have built since has improved from this point.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/ReignOfElementsLegacyOfTheDragonMages',
     itch: null,
   },
   {
@@ -86,7 +86,7 @@ if (spell.element == door.element)
       { name: 'Physical Build', desc: 'Built the wooden chassis from scratch with a teammate, including refitting the Hall sensors after discovering the electromagnetic latch system was interfering with their magnetic readings.' },
     ],
     journey: 'This was my first project entirely off a game engine — pure microcontroller electronics, which meant proving our understanding with real hardware rather than familiar tools. My role was largely the wiring and integration: every sensor and actuator in the final build passed through my hands, while a teammate and I worked out the puzzle logic together and another teammate adapted the code as the design evolved. Close to the deadline, the crank counter and its LED indicators drifted out of sync and stopped resetting — nobody could pin it down, so I took the whole rotary encoder script under my own steam and traced it through until I found the fault. On the hardware side, we\'d planned the case around Hall effect sensors and an electromagnetic latch, only to find the latch\'s own field was interfering with the sensor readings once installed — meaning I had to physically reposition them alongside a teammate mid-build. What I\'m proudest of is the case itself: starting from a slab of cheap plywood cut at B&Q and building an actual box around all of it by hand. The honest gap is that we never wired the two puzzles into a single continuous loop — each was tested and confirmed working in isolation, but not chained together as one flow, which is the clearest next step if this were taken further.',
-    github: '#',
+    github: null,
     itch: null,
   },
   {
@@ -117,7 +117,7 @@ if (spell.element == door.element)
              → Set Previous Direction`,
     },
     journey: 'This was my first solo project in Unreal, built entirely in Blueprints, and the one where a companion character had to feel genuinely helpful rather than a set piece — Brio needed navmesh logic reliable enough to path around the player and solve puzzles on command, which took several passes of playtesting to stop him blocking doorways or getting stuck on geometry. The hardest technical problem was the physics-driven door system: I used a raycast to detect which way the player was approaching so doors would always open away from them, including on the way back. It worked cleanly most of the time, but when the player and Brio were both near a doorway their overlapping collision volumes confused the direction check, occasionally firing the trigger twice or reading the wrong direction — my marker caught this directly, noting the doors "took several goes to enter". I never fully resolved the overlap case within the project\'s scope, which is the honest gap in an otherwise-working system. Two rounds of peer playtesting shaped most of the rest: the first round flagged puzzle variety and onboarding clarity, which fed into clearer visual cues for interactables; the second surfaced the door and animation bugs alongside requests for a more populated world, which became the basis for my post-submission plan around more NPCs and expanded companion dialogue.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/EchoesOfAlchemy',
     itch: null,
   },
   {
@@ -155,7 +155,7 @@ if (spell.element == door.element)
 }`,
     },
     journey: 'This one started ambitious and ended honest. The proposal was built entirely around Stitched Wave Function Collapse — genuine constraint propagation, where each grid cell holds a superposition of possibilities that collapses as its neighbours resolve. Once I got into implementation, getting true WFC working in 3D against an existing static scene turned into far more than a single module could absorb. I made the call to scope it back to something I could actually finish properly: raycast each grid cell, check spacing and reference-influence radii up front, then spawn and surface-snap whatever passes — rather than ship a half-working propagation engine. It behaves like a WFC-style collapse from the outside, but it is honestly closer to constraint-checked procedural placement, and I would rather say that plainly than let the name oversell it.\n\nThe scope call paid off. My marker\'s write-up praised how cleanly it worked end to end, with edge cases handled well enough that they said they could see themselves genuinely using it as a level designer — particularly how placement worked relative to existing surfaces, and how the near-to-only influence constraint held up without breaking. The code was called out as well-structured and well-commented internally, with one fair criticism: I built the Slate UI directly inside the plugin\'s main .cpp instead of pulling it into its own widget class. It works, and it is neat enough for the scope, but it is the first thing I would refactor if I picked this back up — separating the UI from the placement logic properly instead of sharing a file.\n\nOne thing that never made it in: randomised rotation on spawn. Everything places surface-aligned but at identical orientation, which is a small change that would make scattered placement look far less uniform. Known gap, not a hidden one — I ran out of runway before I got to it.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/Procedural-Scene-Populator',
     itch: null,
   },
   {
@@ -189,7 +189,7 @@ if (spell.element == door.element)
 }`,
     },
     journey: 'This was the first project with a real external client rather than a module brief in isolation — Frontier Developments (Planet Coaster, Jurassic World Evolution) set the brief, and the final presentation went to a former Head of Game Design there. That changes what "finished" means: alongside the actual game, the team had to work through a monetisation model, a production roadmap, and live external data tied clearly into gameplay, on top of building for mobile for the first time.\n\nThe mobile side was the steepest individual learning curve. Every character controller I\'d written before assumed a keyboard or gamepad; touch input meant rethinking movement from scratch — turning a drag on a 2D screen into consistent movement around a 3D cafe, with no existing template to adapt. The weather integration was a similar jump on the systems side: parsing live JSON weather data and mapping it onto customer footfall and mood in a way that actually felt connected to the gameplay loop, rather than bolted on as decoration.\n\nWith five of us on the team, I also ended up owning the process side almost by accident — setting up Trello, Discord and a shared Drive structure early on because nobody else had, which then doubled as the reference for the flow diagrams (menu, settings, tutorial, and the three-part game loop) I drew up alongside the tech evaluation and the legal/ethical/security/professional analysis.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/Catpuccino',
     itch: 'https://itsazel.itch.io/catpuccino',
   },
   {
@@ -223,7 +223,7 @@ if (spell.element == door.element)
 }`,
     },
     journey: 'This one started from a genuine "what if" question: if I changed only the neighbourhood definition and left Conway\'s birth/survival rules untouched, how differently would the same rules behave? That curiosity became the whole project\'s spine — Moore, Plus, Cross and a directional 2x3 block all run against identical B3/S23 logic, isolating neighbourhood shape as the only variable.\n\nOnce that baseline worked, I wanted a genuinely different ruleset to compare against, not just another neighbourhood on Conway\'s rules. My first instinct was a lookup table keyed on the exact positions of alive neighbours, not just their count — more expressive, but it ballooned in complexity almost immediately and would have eaten the rest of the project\'s time. I scoped it back to keeping Conway\'s birth/survival structure but rewriting the thresholds per neighbourhood shape, which is how BoB\'s Game of Life ended up feeling genuinely different — denser, less stable patterns — without becoming unmaintainable.\n\nThe hardest part was getting both rulesets to run on the same grid without corrupting each other\'s state. Grid creation and simulation logic started tightly coupled, which made it nearly impossible for two systems to safely read and write the same data, so I split it into a Grid Manager for creation and rendering, and a separate Cellular Automata script for rule evaluation, with rule selection handled dynamically rather than through separate classes per ruleset.\n\nThe honest limitation, and my marker flagged it directly: the code works and is genuinely readable, but it is a monolithic pair of scripts held together by a lot of conditional branching rather than properly separated classes per ruleset or neighbourhood type. Splitting rule sets and neighbourhood types into their own classes behind a shared interface would be the obvious next pass, and would also help the scalability problem that comes with evaluating both rulesets per cell every generation.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/AI-in-Games-Coursework',
     itch: null,
   },
   {
@@ -256,7 +256,7 @@ if (spell.element == door.element)
 float distortionAmount = NormaliseBand(bassBand, 0.0, 1.0) * MaxDistortion;`,
     },
     journey: 'This started from a deliberately non-gaming reference point — planetarium-style audio-visual art rather than a game scene, influenced by Jon Weinel and Chris Speed\'s immersive audio-visual work. That framing shaped the whole project: a seated experience where the user plays a track and looks around while the visuals respond, rather than a level to walk through.\n\nThe technical core is the pipeline from sound to shader: Unreal\'s Submix system extracts frequency bands, which get normalised — raw audio can spike or sit far too quiet depending on the track, so clamping and scaling was essential for consistent behaviour across very different music. Those normalised values then drive custom HLSL nodes controlling UV distortion, colour, and animation speed.\n\nMost of the shader library is porting work rather than from-scratch authorship, and I want to be upfront about that rather than let "shader project" oversell it: ten of the eleven shaders started life as ShaderToy GLSL sources, which I converted into Unreal\'s HLSL material system and then wired to the audio pipeline so they respond to sound instead of running as static loops — porting syntax and structure across shader languages while exposing new parameters the originals never had. Only "My First Shader" was written entirely from scratch. My marker\'s presentation feedback specifically praised the porting understanding while flagging that I should have credited the original authors more clearly — a fair note, and one I\'m fixing here rather than repeating.\n\nPerformance became its own lesson: simple shaders held 80–100 FPS, but the raymarched scenes dropped to around 30 FPS, which is exactly why raymarching sees limited use in real-time game contexts despite how striking it looks — a trade-off my marker specifically called out as a good thing to have noticed. There is an honest unresolved bug too: the first-person character falls through the floor in the scene, and despite it working reliably on my own laptop, I never pinned down which project or engine setting made the difference — it is a known gap, not a hidden one.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/ShaderProgramming',
     itch: null,
   },
   {
@@ -288,7 +288,7 @@ void OpenDoorServerRpc()
 }`,
     },
     journey: 'The brief asked for real-world and virtual activity integrated through multimodal interaction, and the team\'s answer was a co-operative escape room specifically because it gave every specialism — level design, sound and art, networking, game design, mechanics — real surface area. Two principles ran through every mechanic I built: diegetic interaction (a code on a wall, a socket on a generator, never a floating UI) and deliberate asymmetry, so no single player could ever solve a puzzle alone.\n\nThe team started on the BNG VR Interaction Framework for its rich pre-built interactions, then migrated to Unity\'s XR Interaction Toolkit multiplayer kit once it became clear that bolting networking onto BNG was outside scope — a week lost to the switch, but it avoided a whole category of bugs surfacing late. Working through the battery/generator system alongside our network programmer, who had prototyped the initial RPC scaffolding, was the most valuable exchange of the project: he walked me through why server-authoritative movement needs the client to request a change rather than perform it directly, and I carried that same pattern into the teleport pad myself.\n\nI\'m most satisfied with the hex keypad and the battery/generator refactor — the keypad because it delivers exactly the communication-driven puzzle the brief wanted, tuned across three playtests until the rotation felt right without overshooting; the refactor because re-shaping someone else\'s networking code taught me to read another author\'s intent carefully before changing it. The honest weak point is edge-case robustness: the lift could de-sync if the battery was pulled at the exact moment it reached the top, and the dark tile grid could be skipped by walking the join between two safe tiles at the right angle. Both have documented fixes — a debounce on the lift state, a wider kill-zone collider — that didn\'t make the final build.\n\nWhat the report doesn\'t say plainly enough is how the schedule actually played out: what was meant to be a steady final month collapsed into the last five days after other parts of the team stalled, and the level designer and I — having done our own parts on time — ended up carrying most of the remaining mechanics work and the write-up itself in that window, on very little sleep. I\'d rather that explain the scope of what got built and why the edge-case polish didn\'t land, than turn it into a longer story.',
-    github: '#',
+    github: 'https://github.com/DarkBoB92/Relay',
     itch: null,
   },
   {
@@ -336,7 +336,7 @@ if (!hit) {
 }`,
     },
     journey: "The plan was a clean between-group comparison: train one group in MR for a week, compare against a control on a physical re-test. Sixteen of twenty participants never came back for the physical post-test, which killed that comparison outright. Rather than treat that as a dead end, I rebuilt the analysis around what I did have — in-app training data plus verbal feedback from the three training-group returners — and found something more specific than a pass/fail result: high MR proficiency didn't predict physical improvement at all. The participant who tried to apply a learned virtual aim model directly to the real throw got worse; the one with the highest MR scores, who focused on how the launcher physically felt rather than a virtual model, didn't change at all. That reframing — from \"does XR training work\" to \"under what conditions does it transfer\" — became the actual contribution of the project.",
-    github: '#',
+    github: 'https://github.com/DarkBoB92/FYIP',
     itch: null,
   },
   {
