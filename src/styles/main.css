@@ -252,14 +252,32 @@ body {
   justify-content: center;
   font-size: clamp(20px, 3.3vw, 34px);
   line-height: 1;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  /* Dim-at-rest: the glyph "sleeps" in a cool blue-grey and only comes up
+     to full white light on interaction — same dim-means-available,
+     bright-means-focused grammar the carousel cards already use.
+     TUNING KNOB 1: resting alpha (all devices) — currently 0.45 */
+  color: rgba(140, 175, 210, 0.45);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 .xmb-icon span { display: inline-block; transform: translateY(var(--nudge, 0px)); }
-.xmb-item:hover .xmb-icon {
+.xmb-icon span, .xmb-icon svg {
+  filter: drop-shadow(0 0 6px rgba(91,224,201,0));
+  transition: filter 0.2s ease;
+}
+/* Lit state: hover (desktop) or press (mobile — :active shows during the
+   laser-fire beat before navigation, so the tap visibly wakes the icon) */
+.xmb-item:hover .xmb-icon,
+.xmb-item:active .xmb-icon {
   transform: translateY(-10px) scale(1.12);
   background: rgba(91,224,201,0.12);
   border-color: #5be0c9;
   box-shadow: 0 10px 30px rgba(91,224,201,0.25);
+  color: #f2fbff;
+}
+/* TUNING KNOB 2: glow strength — currently 7px @ 0.85 */
+.xmb-item:hover .xmb-icon span, .xmb-item:hover .xmb-icon svg,
+.xmb-item:active .xmb-icon span, .xmb-item:active .xmb-icon svg {
+  filter: drop-shadow(0 0 7px rgba(91,224,201,0.85));
 }
 .xmb-label {
   margin-top: clamp(5px, 1vh, 10px);
@@ -1031,19 +1049,19 @@ body {
     transform: translateY(-50%);
     flex-direction: column;
     justify-content: center;
-    gap: 18px;
+    gap: clamp(14px, 2.2vh, 20px);
     margin: 0;
     padding: 0;
     z-index: 70;
   }
   .xmb-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 19px;
-    border-radius: 10px;
+    width: clamp(50px, min(9.5vh, 14vw), 64px);
+    height: clamp(50px, min(9.5vh, 14vw), 64px);
+    font-size: clamp(19px, 5.2vw, 26px);
+    border-radius: clamp(10px, 2.6vw, 13px);
     background: rgba(0,10,24,0.72);
   }
-  .xmb-label { font-size: 7px; letter-spacing: 1px; margin-top: 5px; }
+  .xmb-label { font-size: clamp(7px, 1.6vw, 9px); letter-spacing: 1px; margin-top: 5px; }
 
   /* Carousel dots: vertical rail, centred on the right edge */
   .carousel-nav { margin: 0; }
