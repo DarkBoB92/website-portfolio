@@ -351,7 +351,12 @@ body {
   letter-spacing: 0.5px;
   color: #cfe6ff;
   margin: 0 0 8px;
-  height: 42px;
+  /* min-height (2 lines), never a fixed height: -webkit-line-clamp plus a
+     fixed height is a known-buggy combo in Chrome — the ellipsis logic
+     disagrees with the forced box height and paints a "…" even when no
+     text is actually truncated. min-height keeps one-line names occupying
+     the same slot so meta/tech stay aligned across cards. */
+  min-height: 38px;
   overflow: hidden;
   overflow-wrap: break-word;
   display: -webkit-box;
@@ -397,6 +402,21 @@ body {
   transition: background 0.2s, transform 0.2s;
 }
 .carousel-dots span.active { background: #5be0c9; transform: scale(1.3); }
+
+/* ---- Strip-mode card interiors ---- */
+/* Whenever the desktop ring can't fit (viewport under 1000px wide OR under
+   700px tall — mirrors getConfig() in Carousel.jsx), cards are JS-sized to
+   the measured leftover space, so their INSIDES must scale too: the desktop
+   card's fixed 142px thumbnail and 18px meta text were spilling out of
+   shrunken cards. Thumbnail goes proportional, text steps down, and
+   overflow:hidden guarantees nothing can ever render past the border. */
+@media (max-width: 999px), (max-height: 699px) {
+  .mem-card { padding: 14px; overflow: hidden; }
+  .thumb { height: 44%; margin-bottom: 10px; }
+  .name { font-size: 13px; line-height: 16px; min-height: 32px; margin-bottom: 6px; }
+  .meta { font-size: 11px; margin-bottom: 3px; }
+  .tech { font-size: 9.5px; }
+}
 
 /* ---- Status strip ---- */
 .status-strip {
@@ -460,6 +480,11 @@ body {
   color: #cfe6ff;
   white-space: nowrap;
   pointer-events: none;
+  /* Long titles (e.g. POTATO BONANZA EXTRAVAGANZA) truncate instead of
+     running underneath the back button / tag chips */
+  max-width: 46%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---- About ---- */
@@ -495,7 +520,12 @@ body {
 .avatar-name { font-family: 'Orbitron', sans-serif; font-size: 19px; letter-spacing: 2px; color: #cfe6ff; text-align: center; margin-top: 6px; }
 .avatar-tag { font-size: 16px; color: #5be0c9; letter-spacing: 2px; }
 .avatar-location { font-size: 15px; color: #6fa8d0; margin-top: 4px; }
-.about-right { flex: 1; display: flex; flex-direction: column; gap: 38px; overflow-y: auto; justify-content: center; max-width: 1100px; }
+.about-right { flex: 1; display: flex; flex-direction: column; gap: 38px; overflow-y: auto; max-width: 1100px; }
+/* Vertically centres the text when it's shorter than the panel, but — unlike
+   justify-content:center — still lets you scroll to the very top when it
+   overflows (centered overflow gets clipped above the scroll start). */
+.about-right > :first-child { margin-top: auto; }
+.about-right > :last-child { margin-bottom: auto; }
 .about-block-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 5px; color: #5be0c9; margin-bottom: 12px; }
 .about-block p { font-size: 19px; color: #a0c0dc; line-height: 1.75; margin: 0; }
 
@@ -857,10 +887,9 @@ body {
 
   .carousel-wrap { margin-top: 4px; padding: 0 8px 8px; }
   .carousel-stage { height: 300px; }
+  /* Pre-JS fallback size only; card interiors come from the unified
+     strip-mode rule further up (proportional thumb, stepped-down text). */
   .mem-slot { width: 180px; height: 245px; }
-  .mem-card { padding: 14px; }
-  .thumb { height: 96px; }
-  .name { font-size: 10px; height: 34px; }
   .carousel-nav { margin-top: 10px; gap: 24px; }
   .carousel-arrow { display: none; }
 
@@ -1011,7 +1040,7 @@ body {
     bottom: 0; left: 0; right: 0;
     z-index: 65;
     background: linear-gradient(to top, rgba(0,8,20,0.95) 40%, transparent);
-    padding: 10px 12px 12px;
+    padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
     font-size: 8.5px;
   }
 }
@@ -1041,9 +1070,10 @@ body {
    this one, or the phone gets 62px icons and a 420px stage again.
 
    In CSS pixels a landscape phone can be 900–1200px wide, so width-based
-   queries (and the old vw>=1000 desktop branch in Carousel.jsx) misread
-   it as a desktop. Height + orientation is the honest signal — same
-   threshold (550px) as isLandscapePhone() in Carousel.jsx.
+   queries misread it as a desktop; genuinely short viewports are the
+   honest signal. (JS-side, getConfig() in Carousel.jsx independently
+   rejects the desktop ring for anything under 700px tall — this query
+   just compacts the chrome further for the REALLY short screens.)
 
    Layout: horizontal card strip (mobile mode in JS), hard-compacted
    chrome, and the same locked shell as portrait — page never scrolls,
@@ -1071,13 +1101,21 @@ body {
 
   .hero { padding: 0 20px; }
   .hero h1 { font-size: 17px; letter-spacing: 3px; }
-  .hero p { display: none; }
+  .hero p { font-size: 9px; letter-spacing: 3px; margin-top: 2px; }
 
-  .xmb-row { gap: 10px; margin-top: 4px; }
-  .xmb-icon { width: 30px; height: 30px; font-size: 13px; border-radius: 8px; }
-  .xmb-label { display: none; }
+  .xmb-row { gap: 14px; margin-top: 4px; }
+  .xmb-icon { width: 44px; height: 44px; font-size: 18px; border-radius: 9px; }
+  /* No hover on touch — keep the names visible under the icons, like portrait */
+  .xmb-label { font-size: 7px; letter-spacing: 1px; margin-top: 4px; }
 
-  .section-label { display: none; }
+  /* Cards here can get quite small — tighten interiors one step beyond
+     the unified strip rule */
+  .name { font-size: 11px; line-height: 14px; min-height: 28px; margin-bottom: 5px; }
+  .meta { font-size: 9.5px; margin-bottom: 2px; }
+  .tech { font-size: 8.5px; }
+  .mem-card { padding: 11px; }
+
+  .section-label { font-size: 9px; letter-spacing: 4px; margin: 4px 0 0; }
 
   /* Bottom padding keeps the dots clear of the fixed status strip.
      The JS measures this wrap's real height (ResizeObserver), so the
@@ -1091,9 +1129,40 @@ body {
   .carousel-arrow { display: none; }
 
   .status-strip {
-    padding: 4px 10px;
-    font-size: 7px;
-    gap: 4px;
+    padding: 4px 10px calc(4px + env(safe-area-inset-bottom, 0px));
+    font-size: 7.5px;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .status-strip span:last-child { display: none; }
+
+  /* Sub-screens: same medicine the portrait block already had — these
+     fixes lived only under max-width:640px, which a 900px-wide landscape
+     phone never matches. Wrapping header, and single scrollable columns
+     instead of desktop layouts that assumed ~700px of height. */
+  .screen-topbar { flex-wrap: wrap; padding: 8px 14px; row-gap: 6px; }
+  .screen-title { font-size: 11px; letter-spacing: 2px; max-width: 50%; }
+  .back-btn { font-size: 9px; padding: 5px 10px; }
+  .proj-tags { width: 100%; justify-content: center; }
+
+  .about-layout { flex-direction: column; padding: 16px 26px 40px; gap: 18px; overflow-y: auto; }
+  .about-left { width: 100%; }
+  .avatar-large { width: 84px; height: 84px; }
+  .avatar-name { font-size: 14px; margin-top: 2px; }
+  .avatar-tag { font-size: 11px; }
+  .avatar-location { font-size: 10px; margin-top: 2px; }
+  .about-right { overflow: visible; gap: 18px; }
+  .about-right > :first-child { margin-top: 0; }
+  .about-right > :last-child { margin-bottom: 0; }
+  .about-block-title { font-size: 11px; margin-bottom: 8px; }
+  .about-block p { font-size: 13px; line-height: 1.6; }
+
+  .contact-layout { justify-content: flex-start; overflow-y: auto; padding: 18px 26px 40px; gap: 8px; }
+  .contact-intro { font-size: 16px; letter-spacing: 4px; }
+  .contact-sub { font-size: 11px; margin-bottom: 12px; }
+  .contact-links { gap: 12px; max-width: 560px; }
+  .contact-link { padding: 12px 18px; gap: 16px; }
+  .contact-link-icon { font-size: 18px; width: 30px; }
+  .contact-link-label { font-size: 10px; margin-bottom: 3px; }
+  .contact-link-value { font-size: 13px; }
 }

@@ -10,6 +10,11 @@ const PERSPECTIVE = 1600
 
 const CARD_RATIO = CARD_H / CARD_W  // 1.36 — mobile cards keep this same proportion
 
+// Strips at least this wide render faded ±2 neighbours at the edges
+// instead of empty gutters. 840 rather than a rounder 900 so typical
+// landscape phones (~850–920 CSS px wide) qualify.
+const WIDE_STRIP_MIN = 840
+
 // Rough vertical budget consumed by everything above/below the carousel
 // stage itself. Used only for the very first paint, before the real
 // available height has been measured off the actual DOM (see wrapAvailH
@@ -28,18 +33,16 @@ function isPortrait(vw, vh) {
   return vw <= 640 && vh > vw
 }
 
-// A landscape phone is SHORT, not narrow — in CSS pixels it can easily be
-// 900–1200px wide, which used to trip the vw >= 1000 desktop branch below
-// and cram the full 3D ring + desktop chrome into a ~400px-tall screen
-// (the overlap mess). Height + orientation is the reliable signal: no
-// desktop window that can actually fit the ring is this short.
-function isLandscapePhone(vw, vh) {
-  return vh <= 550 && vw > vh
-}
-
+// Desktop vs mobile is decided by one question only: does the desktop 3D
+// ring actually FIT? The ring needs ~1000px of width AND ~700px of height
+// (440px stage + the header stack). Width alone used to decide this, which
+// broke on landscape phones — in CSS pixels they can be 900–1200px wide,
+// so they'd get the full ring crammed into a ~400px-tall screen. Any
+// viewport that fails either dimension gets the strip, which sizes itself
+// off measured space and works at any height. No device sniffing, and
+// F12-resize behaves identically to a real phone.
 function getConfig(vw, vh) {
-  if (isLandscapePhone(vw, vh)) return { radius: vw * 0.62, mobile: true }
-  if (vw >= 1000) return { radius: 780, mobile: false }
+  if (vw >= 1000 && vh >= 700) return { radius: 780, mobile: false }
   return { radius: vw * 0.62, mobile: true }
 }
 
@@ -81,11 +84,18 @@ function getMobileCardSize(vw, vh, measuredAvailH) {
 
   const rawAvailH = measuredAvailH != null ? measuredAvailH : vh - chromeHeight(vh)
   const availH = Math.max(120, rawAvailH / STAGE_MARGIN)
-  const hFromHeight = Math.min(hFromWidth, availH)
-  const wFromHeight = hFromHeight / CARD_RATIO
 
-  if (wFromHeight < wFromWidth) return { w: Math.round(wFromHeight), h: Math.round(hFromHeight) }
-  return { w: wFromWidth, h: Math.round(hFromWidth) }
+  // Fits at full size — done.
+  if (hFromWidth <= availH) return { w: wFromWidth, h: Math.round(hFromWidth) }
+
+  // Height-limited. On wide-but-short (landscape) screens, ALSO relax the
+  // aspect ratio: the tall 1.36 card at reduced height leaves a block of
+  // dead space under the text, so let it be a bit squarer instead. The
+  // interiors are proportional (thumb 44%, see main.css) so they follow.
+  const ratio = vw > vh ? 1.18 : CARD_RATIO
+  const h = Math.round(availH)
+  const w = Math.min(Math.round(availH / ratio), wFromWidth)
+  return { w, h }
 }
 
 // (getConfig moved above, next to isLandscapePhone — it now needs vh too)
@@ -124,8 +134,20 @@ function getRingTransform(offset, vw, vh, portrait, measuredAvailH) {
 
   if (mobile) {
     const { w: cardW } = getMobileCardSize(vw, vh, measuredAvailH)
+    const wide = vw >= WIDE_STRIP_MIN
+    // Narrow strips keep the tight overlapped look (0.86 card-widths apart).
+    // Wide strips spread the three main cards across ~60% of the screen so
+    // landscape phones don't show a huddle in the middle of empty gutters.
+    const s1 = wide ? Math.min(cardW * 1.7, vw * 0.30) : cardW * 0.86
     if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
-    if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * cardW * 0.86}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
+    if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${Math.sign(offset) * s1}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
+    // Wide strips also get faded ±2 depth cards straddling the screen edges,
+    // echoing the desktop ring. (Distance is FROM CENTRE — a previous version
+    // multiplied by the raw offset of ±2 and landed them fully offscreen.)
+    if (Math.abs(offset) === 2 && wide) {
+      const s2 = Math.min(s1 + cardW * 0.8, vw / 2 + cardW * 0.2)
+      return { t: `translateX(-50%) translateY(-50%) translateX(${Math.sign(offset) * s2}px) scale(0.62)`, opacity: 0.25, z: 12, clickable: false }
+    }
     // Comfortably off the visible strip regardless of viewport width — exact
     // distance barely matters since these are also display:none'd below.
     return { t: `translateX(-50%) translateY(-50%) translateX(${offset * (vw + cardW)}px) scale(0.6)`, opacity: 0, z: 10, clickable: false }
@@ -329,7 +351,8 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
             // that clipping, fully remove cards that aren't meant to be seen.
             // Portrait keeps the ±2 "depth" cards visible (very faint), so
             // only |offset| >= 3 is culled there.
-            const isHidden = portrait ? Math.abs(offset) >= 3 : (mobile && !clickable)
+            const wideStrip = mobile && !portrait && vw >= WIDE_STRIP_MIN
+            const isHidden = (portrait || wideStrip) ? Math.abs(offset) >= 3 : (mobile && !clickable)
 
             return (
               <div
