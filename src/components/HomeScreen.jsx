@@ -24,7 +24,13 @@ export default function HomeScreen({ onNavigate, fire, carouselIndex, setCarouse
 
       <div className="topbar">
         <div className="profile-chip">
-          <div className="avatar" />
+          <div className="avatar">
+            <img
+              src={import.meta.env.BASE_URL + 'images/profile-avatar.jpg'}
+              alt=""
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+          </div>
           <span>ROBERTO SCIALPI</span>
         </div>
         <Clock />

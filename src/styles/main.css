@@ -165,9 +165,17 @@ body {
 }
 .profile-chip { display: flex; align-items: center; gap: 12px; }
 .avatar {
+  position: relative;
   width: 36px; height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3a8bff, #5be0c9);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ---- Hero ---- */
@@ -471,11 +479,18 @@ body {
   width: 250px;
 }
 .avatar-large {
+  position: relative;
   width: 210px; height: 210px;
   border-radius: 50%;
   background: linear-gradient(135deg, #1a3a6e, #0d5c63);
   border: 2px solid rgba(91,224,201,0.4);
   box-shadow: 0 0 40px rgba(91,224,201,0.18);
+  overflow: hidden;
+}
+.avatar-large img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .avatar-name { font-family: 'Orbitron', sans-serif; font-size: 19px; letter-spacing: 2px; color: #cfe6ff; text-align: center; margin-top: 6px; }
 .avatar-tag { font-size: 16px; color: #5be0c9; letter-spacing: 2px; }
@@ -805,17 +820,28 @@ body {
 /* Phones (portrait) */
 @media (max-width: 640px) {
 
-  /* Allow natural page scrolling */
-  body {
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-y: auto;
+  /* Locked app shell: the page itself NEVER scrolls on phones.
+     Sub-screens (about / skills / project) scroll internally instead.
+     overscroll-behavior kills Android pull-to-refresh; touch-action on
+     the home screen hands every pan gesture to the carousel (taps still
+     work — touch-action only disables browser panning/zooming). */
+  html, body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
   .home {
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  /* Inner scrollers must not chain their overscroll up to the page,
+     or Chrome would still fire pull-to-refresh at the top of a list. */
+  .about-layout, .about-right, .skills-layout, .proj-scroll, .contact-layout {
+    overscroll-behavior: contain;
   }
 
   .topbar { padding: 10px 16px; font-size: 12px; }
@@ -824,7 +850,7 @@ body {
   .hero p { font-size: 12px; letter-spacing: 2px; margin-top: 6px; }
 
   .xmb-row { gap: 14px; margin-top: 18px; }
-  .xmb-icon { width: 50px; height: 50px; font-size: 19px; border-radius: 12px; }
+  .xmb-icon { width: 56px; height: 56px; font-size: 22px; border-radius: 12px; }
   .xmb-label { font-size: 9px; letter-spacing: 1px; margin-top: 8px; }
 
   .section-label { font-size: 10px; letter-spacing: 3px; margin: 14px 0 4px; }
@@ -836,16 +862,14 @@ body {
   .thumb { height: 96px; }
   .name { font-size: 10px; height: 34px; }
   .carousel-nav { margin-top: 10px; gap: 24px; }
-  .carousel-arrow { width: 40px; height: 40px; font-size: 17px; }
-  .carousel-arrow.side-left { left: 8px; }
-  .carousel-arrow.side-right { right: 8px; }
+  .carousel-arrow { display: none; }
 
   /* Status strip becomes part of the page flow */
   .status-strip {
     position: static;
     background: none;
     padding: 12px 12px 18px;
-    font-size: 8px;
+    font-size: 9.5px;
     letter-spacing: 1px;
     flex-wrap: wrap;
     gap: 6px;
@@ -865,7 +889,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .back-btn { font-size: 10px; padding: 6px 12px; }
+  .back-btn { font-size: 9px; padding: 5px 10px; }
   .proj-tags { width: 100%; justify-content: center; }
 
   /* ABOUT: stack vertically, everything scrolls */
@@ -916,6 +940,82 @@ body {
   .contact-link-value { font-size: 12px; word-break: break-all; }
 }
 
+/* Phones (portrait): XMB vertical layout.
+   The card rail runs vertically down the centre; icons dock on the
+   left edge, dots become a vertical rail on the right, and the hero /
+   topbar / status strip sit on a higher layer so passing cards slide
+   underneath them instead of covering the name. */
+@media (max-width: 640px) and (orientation: portrait) {
+
+  /* Fixed shell pieces paint above the card column (cards are z 5–30) */
+  .topbar { z-index: 60; }
+  .hero { z-index: 60; }
+  .section-label { z-index: 60; }
+
+  /* Soft dark halo behind the title so it stays readable when a faint
+     card passes underneath it */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -14px -10px -18px;
+    background: radial-gradient(ellipse 75% 100% at 50% 45%, rgba(0,8,20,0.88), transparent 78%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* XMB icons: vertical dock, centred on the left edge */
+  .xmb-row {
+    position: fixed;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    z-index: 70;
+  }
+  .xmb-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 19px;
+    border-radius: 10px;
+    background: rgba(0,10,24,0.72);
+  }
+  .xmb-label { font-size: 7px; letter-spacing: 1px; margin-top: 5px; }
+
+  /* Carousel dots: vertical rail, centred on the right edge */
+  .carousel-nav { margin: 0; }
+  .carousel-dots {
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 10px;
+    z-index: 70;
+  }
+
+  /* Arrows are hidden on phones (see .carousel-arrow { display: none }
+     above) — swipe up/down handles navigation instead. */
+
+  /* The stage fills all remaining height; JS sets height:100% inline too */
+  .carousel-wrap { padding: 0; }
+  .carousel-stage { height: 100%; }
+
+  /* Status strip pins back to the bottom as part of the fixed shell,
+     fading the lower depth-card out underneath it */
+  .status-strip {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 65;
+    background: linear-gradient(to top, rgba(0,8,20,0.95) 40%, transparent);
+    padding: 10px 12px 12px;
+    font-size: 8.5px;
+  }
+}
+
 /* ---- Short viewport safety (small laptops) ---- */
 /* The home screen is a fixed 100vh layout, so on shorter screens we trim
    the non-card elements to keep the carousel nav above the status strip.
@@ -932,4 +1032,68 @@ body {
   .carousel-stage { height: 420px; }
   .carousel-nav { margin-top: 4px; }
   .carousel-arrow { width: 52px; height: 52px; font-size: 22px; }
+}
+
+/* ---- Phones (landscape) ---- */
+/* MUST stay after the small-laptop safety block above: a landscape phone
+   matches both queries (short AND wider than 641px), and these two set
+   the same properties — whichever comes later wins, and it needs to be
+   this one, or the phone gets 62px icons and a 420px stage again.
+
+   In CSS pixels a landscape phone can be 900–1200px wide, so width-based
+   queries (and the old vw>=1000 desktop branch in Carousel.jsx) misread
+   it as a desktop. Height + orientation is the honest signal — same
+   threshold (550px) as isLandscapePhone() in Carousel.jsx.
+
+   Layout: horizontal card strip (mobile mode in JS), hard-compacted
+   chrome, and the same locked shell as portrait — page never scrolls,
+   no pull-to-refresh, no pinch state left to leak back into portrait. */
+@media (max-height: 550px) and (orientation: landscape) {
+
+  html, body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  .home {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .about-layout, .about-right, .skills-layout, .proj-scroll, .contact-layout {
+    overscroll-behavior: contain;
+  }
+
+  .topbar { padding: 5px 18px; font-size: 11px; }
+  .avatar { width: 24px; height: 24px; }
+
+  .hero { padding: 0 20px; }
+  .hero h1 { font-size: 17px; letter-spacing: 3px; }
+  .hero p { display: none; }
+
+  .xmb-row { gap: 10px; margin-top: 4px; }
+  .xmb-icon { width: 30px; height: 30px; font-size: 13px; border-radius: 8px; }
+  .xmb-label { display: none; }
+
+  .section-label { display: none; }
+
+  /* Bottom padding keeps the dots clear of the fixed status strip.
+     The JS measures this wrap's real height (ResizeObserver), so the
+     card automatically shrinks to whatever space is actually left. */
+  .carousel-wrap { padding: 0 20px 30px; }
+  .carousel-nav { margin-top: 4px; }
+  .carousel-dots { gap: 8px; }
+  .carousel-dots span { width: 5px; height: 5px; }
+
+  /* Swipe navigates; no room and no need for arrows on any phone */
+  .carousel-arrow { display: none; }
+
+  .status-strip {
+    padding: 4px 10px;
+    font-size: 7px;
+    gap: 4px;
+  }
+  .status-strip span:last-child { display: none; }
 }

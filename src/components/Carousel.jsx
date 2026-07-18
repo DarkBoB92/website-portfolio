@@ -11,11 +11,48 @@ const PERSPECTIVE = 1600
 const CARD_RATIO = CARD_H / CARD_W  // 1.36 — mobile cards keep this same proportion
 
 // Rough vertical budget consumed by everything above/below the carousel
-// stage itself (topbar, hero, XMB row, section label, nav arrows, dots,
-// status strip). Deliberately conservative — better to slightly undersize
-// the card than to force scrolling on a short screen.
+// stage itself. Used only for the very first paint, before the real
+// available height has been measured off the actual DOM (see wrapAvailH
+// in the component below) — landscape phones especially can't be
+// estimated reliably by formula since the exact chrome height depends on
+// font rendering, so this is just a placeholder to avoid a flash of a
+// wrongly-sized card before the measurement effect runs.
 function chromeHeight(vh) {
-  return vh <= 500 ? 190 : 280
+  return vh <= 550 ? 170 : 280
+}
+
+// Portrait phones flip the whole layout: icons dock on the left edge,
+// dots on the right, and the cards run VERTICALLY between them (swipe
+// up/down). True when we're phone-narrow AND taller than wide.
+function isPortrait(vw, vh) {
+  return vw <= 640 && vh > vw
+}
+
+// A landscape phone is SHORT, not narrow — in CSS pixels it can easily be
+// 900–1200px wide, which used to trip the vw >= 1000 desktop branch below
+// and cram the full 3D ring + desktop chrome into a ~400px-tall screen
+// (the overlap mess). Height + orientation is the reliable signal: no
+// desktop window that can actually fit the ring is this short.
+function isLandscapePhone(vw, vh) {
+  return vh <= 550 && vw > vh
+}
+
+function getConfig(vw, vh) {
+  if (isLandscapePhone(vw, vh)) return { radius: vw * 0.62, mobile: true }
+  if (vw >= 1000) return { radius: 780, mobile: false }
+  return { radius: vw * 0.62, mobile: true }
+}
+
+// Card size for the vertical (portrait) column. Width is whatever fits
+// between the icon dock (left) and the dot rail (right); height is then
+// capped so the active card plus its peeking neighbours sit comfortably
+// inside the locked, non-scrolling viewport.
+function getPortraitCardSize(vw, vh) {
+  const w = Math.min(250, vw - 132)
+  const h = Math.round(w * CARD_RATIO)
+  const maxH = Math.round(vh * 0.40)
+  if (h > maxH) return { w: Math.round(maxH / CARD_RATIO), h: maxH }
+  return { w, h }
 }
 
 // The real fix for portrait vs landscape: compute a size from *width*
@@ -24,11 +61,26 @@ function chromeHeight(vh) {
 // so the height-based number wins there; a portrait phone is narrow but
 // tall, so the width-based number wins there. Same formula handles both
 // instead of guessing per-orientation.
-function getMobileCardSize(vw, vh) {
+//
+// measuredAvailH, when provided, is the carousel-wrap's actual rendered
+// height (see wrapAvailH in the component) — the true remaining space
+// after the topbar/hero/icons/dots/status-strip have taken theirs. This
+// replaces the old fixed chromeHeight() guess, which under-cropped on
+// landscape phones (their compact chrome still added up to more than the
+// guess accounted for) and caused the card to overflow into the UI above
+// and below it.
+//
+// STAGE_MARGIN mirrors the 1.15x the stage element itself adds around the
+// card (see the inline `height: cardSize.h * 1.15` below) — dividing the
+// measured space by it here keeps the card + its margin within budget,
+// instead of the card alone fitting but the stage still overflowing.
+const STAGE_MARGIN = 1.15
+function getMobileCardSize(vw, vh, measuredAvailH) {
   const wFromWidth = vw <= 640 ? 240 : 290
   const hFromWidth = wFromWidth * CARD_RATIO
 
-  const availH = Math.max(160, vh - chromeHeight(vh))
+  const rawAvailH = measuredAvailH != null ? measuredAvailH : vh - chromeHeight(vh)
+  const availH = Math.max(120, rawAvailH / STAGE_MARGIN)
   const hFromHeight = Math.min(hFromWidth, availH)
   const wFromHeight = hFromHeight / CARD_RATIO
 
@@ -36,10 +88,7 @@ function getMobileCardSize(vw, vh) {
   return { w: wFromWidth, h: Math.round(hFromWidth) }
 }
 
-function getConfig(vw) {
-  if (vw >= 1000) return { radius: 780, mobile: false }
-  return { radius: vw * 0.62, mobile: true }
-}
+// (getConfig moved above, next to isLandscapePhone — it now needs vh too)
 
 // Real 3D geometry for a card at a given ring offset: angle, z-depth, x position.
 function get3D(offset, radius) {
@@ -52,11 +101,29 @@ function get3D(offset, radius) {
   return { angle, rad, z, x, ry }
 }
 
-function getRingTransform(offset, vw, vh) {
-  const { radius, mobile } = getConfig(vw)
+function getRingTransform(offset, vw, vh, portrait, measuredAvailH) {
+  const { radius, mobile } = getConfig(vw, vh)
+
+  // Vertical column for portrait phones: active card centred, neighbours
+  // peek above/below (scaled + faded), second neighbours barely-there for
+  // depth. They slide UNDER the hero / status strip, which sit on a
+  // higher layer, so the title always stays readable.
+  if (portrait) {
+    const { h: cardH } = getPortraitCardSize(vw, vh)
+    if (offset === 0) {
+      return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
+    }
+    if (Math.abs(offset) === 1) {
+      return { t: `translateX(-50%) translateY(-50%) translateY(${offset * cardH * 0.78}px) scale(0.74)`, opacity: 0.5, z: 20, clickable: true }
+    }
+    if (Math.abs(offset) === 2) {
+      return { t: `translateX(-50%) translateY(-50%) translateY(${offset * cardH * 1.42}px) scale(0.6)`, opacity: 0.12, z: 10, clickable: false }
+    }
+    return { t: `translateX(-50%) translateY(-50%) translateY(${offset * vh}px) scale(0.5)`, opacity: 0, z: 5, clickable: false }
+  }
 
   if (mobile) {
-    const { w: cardW } = getMobileCardSize(vw, vh)
+    const { w: cardW } = getMobileCardSize(vw, vh, measuredAvailH)
     if (offset === 0)            return { t: 'translateX(-50%) translateY(-50%) scale(1)', opacity: 1, z: 30, clickable: true }
     if (Math.abs(offset) === 1)  return { t: `translateX(-50%) translateY(-50%) translateX(${offset * cardW * 0.86}px) scale(0.8)`, opacity: 0.6, z: 20, clickable: true }
     // Comfortably off the visible strip regardless of viewport width — exact
@@ -93,8 +160,8 @@ function getRingTransform(offset, vw, vh) {
 // and lay flat, non-transformed "catcher" plates over the three front slots,
 // positioned with the same perspective-projection math the browser itself
 // uses to draw the 3D transform, so they land exactly on the visible card.
-function getCatcherStyle(offset, vw) {
-  const { radius } = getConfig(vw)
+function getCatcherStyle(offset, vw, vh) {
+  const { radius } = getConfig(vw, vh)
   const { z, x } = get3D(offset, radius)
   const scale = PERSPECTIVE / (PERSPECTIVE - z)   // perspective divide
   const screenX = x * scale
@@ -118,10 +185,26 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
   const [vh, setVh] = useState(typeof window !== 'undefined' ? window.innerHeight : 800)
   const [hoveredOffset, setHoveredOffset] = useState(null)
   const lastHovered = useRef(null)
-  const touchStartX = useRef(null)
+  const touchStart = useRef(null)          // { x, y } of the initial touch
   const touchMoved = useRef(false)
   const wheelAcc = useRef(0)
   const wheelLastStep = useRef(0)
+  const wrapRef = useRef(null)
+  // The real, rendered height of .carousel-wrap — i.e. whatever's left
+  // over after the topbar/hero/icons/section-label/status-strip have
+  // taken their share of the flex column. null until first measured.
+  const [wrapAvailH, setWrapAvailH] = useState(null)
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(entries => {
+      const h = entries[0]?.contentRect?.height
+      if (h) setWrapAvailH(h)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
     const onResize = () => { setVw(window.innerWidth); setVh(window.innerHeight) }
@@ -144,30 +227,44 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === 'ArrowLeft') rotate(-1)
-      if (e.key === 'ArrowRight') rotate(1)
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') rotate(-1)
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') rotate(1)
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [rotate])
 
+  const portrait = isPortrait(vw, vh)
+  const mobile = getConfig(vw, vh).mobile
+  const cardSize = portrait ? getPortraitCardSize(vw, vh)
+                 : mobile   ? getMobileCardSize(vw, vh, wrapAvailH)
+                 : null
+
+  // Swipes drive the carousel: horizontal on desktop/landscape, VERTICAL
+  // on portrait phones (swipe up = next, like flicking through a rail).
+  // Page scrolling / pull-to-refresh can't hijack the gesture because the
+  // home screen sets touch-action: none (see main.css).
   const onTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
     touchMoved.current = false
   }
   const onTouchMove = (e) => {
-    if (touchStartX.current === null) return
-    if (Math.abs(e.touches[0].clientX - touchStartX.current) > 10) touchMoved.current = true
+    if (!touchStart.current) return
+    const dx = e.touches[0].clientX - touchStart.current.x
+    const dy = e.touches[0].clientY - touchStart.current.y
+    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) touchMoved.current = true
   }
   const onTouchEnd = (e) => {
-    if (touchStartX.current === null) return
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    touchStartX.current = null
-    if (Math.abs(dx) > 45) rotate(dx < 0 ? 1 : -1)
+    if (!touchStart.current) return
+    const dx = e.changedTouches[0].clientX - touchStart.current.x
+    const dy = e.changedTouches[0].clientY - touchStart.current.y
+    touchStart.current = null
+    if (portrait) {
+      if (Math.abs(dy) > 45) rotate(dy < 0 ? 1 : -1)
+    } else {
+      if (Math.abs(dx) > 45) rotate(dx < 0 ? 1 : -1)
+    }
   }
-
-  const mobile = getConfig(vw).mobile
-  const mobileSize = mobile ? getMobileCardSize(vw, vh) : null
 
   // Wheel navigation: scroll down (or trackpad-right) = next, scroll up = previous.
   //
@@ -196,11 +293,25 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
     }
   }
 
+  // Arrows are hidden on phones via CSS (swipe handles navigation there),
+  // so no need to compute their position on mobile.
+  const arrowGap = (portrait && !mobile) ? Math.round(cardSize.h / 2) + 26 : null
+  const arrowPrevStyle = portrait
+    ? { left: '50%', right: 'auto', top: `calc(50% - ${arrowGap}px)`, bottom: 'auto' }
+    : undefined
+  const arrowNextStyle = portrait
+    ? { left: '50%', right: 'auto', top: `calc(50% + ${arrowGap}px)`, bottom: 'auto' }
+    : undefined
+
   return (
-    <div className="carousel-wrap" onWheel={onWheel}>
+    <div className="carousel-wrap" ref={wrapRef} onWheel={onWheel}>
       <div
         className="carousel-stage carousel-3d"
-        style={mobileSize ? { height: `${Math.round(mobileSize.h * 1.15)}px` } : undefined}
+        style={
+          portrait ? { height: '100%' }
+          : cardSize ? { height: `${Math.round(cardSize.h * 1.15)}px` }
+          : undefined
+        }
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -209,14 +320,16 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
           {projects.map((proj, i) => {
             const rawOffset = ((i - current) % TOTAL + TOTAL) % TOTAL
             const offset = rawOffset > TOTAL / 2 ? rawOffset - TOTAL : rawOffset
-            const { t, opacity, z, clickable } = getRingTransform(offset, vw, vh)
+            const { t, opacity, z, clickable } = getRingTransform(offset, vw, vh, portrait, wrapAvailH)
             const isActive = offset === 0
             const isHovered = !mobile && hoveredOffset === offset
             // Belt-and-braces: overflow:hidden can fail to clip 3D-transformed
             // descendants on some mobile browsers (a known rendering quirk,
             // especially visible during pinch-zoom). Rather than depend on
             // that clipping, fully remove cards that aren't meant to be seen.
-            const isHidden = mobile && !clickable
+            // Portrait keeps the ±2 "depth" cards visible (very faint), so
+            // only |offset| >= 3 is culled there.
+            const isHidden = portrait ? Math.abs(offset) >= 3 : (mobile && !clickable)
 
             return (
               <div
@@ -226,8 +339,8 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
                   position: 'absolute',
                   top: mobile ? '50%' : '42%',
                   left: '50%',
-                  width: mobileSize ? `${mobileSize.w}px` : undefined,
-                  height: mobileSize ? `${mobileSize.h}px` : undefined,
+                  width: cardSize ? `${cardSize.w}px` : undefined,
+                  height: cardSize ? `${cardSize.h}px` : undefined,
                   transform: t,
                   opacity,
                   zIndex: isHovered ? z + 500 : z,
@@ -293,7 +406,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
               return (
                 <div
                   key={offset}
-                  style={getCatcherStyle(offset, vw)}
+                  style={getCatcherStyle(offset, vw, vh)}
                   onMouseEnter={() => {
                     if (lastHovered.current !== i) {
                       playHover()
@@ -317,6 +430,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
 
         <div
           className="carousel-arrow side-left"
+          style={arrowPrevStyle}
           onClick={(e) => {
             e.stopPropagation()
             onFireAction(e.currentTarget, () => rotate(-1, { silent: true }))
@@ -324,6 +438,7 @@ export default function Carousel({ onFire, onFireAction, onNavigate, current, se
         >‹</div>
         <div
           className="carousel-arrow side-right"
+          style={arrowNextStyle}
           onClick={(e) => {
             e.stopPropagation()
             onFireAction(e.currentTarget, () => rotate(1, { silent: true }))

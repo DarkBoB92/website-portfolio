@@ -8,7 +8,13 @@ export default function AboutScreen({ onBack }) {
       </div>
       <div className="about-layout">
         <div className="about-left">
-          <div className="avatar-large" />
+          <div className="avatar-large">
+            <img
+              src={import.meta.env.BASE_URL + 'images/profile-avatar.jpg'}
+              alt=""
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+          </div>
           <div className="avatar-name">ROBERTO SCIALPI</div>
           <div className="avatar-tag">GAME PROGRAMMER</div>
           <div className="avatar-location">📍 LONDON, UK</div>
