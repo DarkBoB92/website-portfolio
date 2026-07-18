@@ -76,5 +76,5 @@ function Clock() {
     const id = setInterval(tick, 30000)
     return () => clearInterval(id)
   }, [])
-  return <span ref={ref} />
+  return <span ref={ref} className="clock" />
 }

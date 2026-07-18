@@ -180,7 +180,10 @@ body {
   letter-spacing: 1px;
   flex-shrink: 0;
 }
-.profile-chip { display: flex; align-items: center; gap: 12px; }
+.profile-chip { display: flex; align-items: center; gap: 12px; min-width: 0; }
+/* The clock must survive any squeeze: never shrinks, never wraps, and
+   tabular digits stop it jittering in width as minutes tick over */
+.clock { flex-shrink: 0; white-space: nowrap; margin-left: 12px; font-variant-numeric: tabular-nums; }
 .avatar {
   position: relative;
   width: clamp(26px, 3vw, 36px); height: clamp(26px, 3vw, 36px);
@@ -1128,7 +1131,7 @@ body {
     overscroll-behavior: contain;
   }
 
-  .topbar { padding: 5px 18px; font-size: 11px; }
+  .topbar { padding: 5px 18px; font-size: 11px; z-index: 60; }
   .avatar { width: 24px; height: 24px; }
 
   .hero { padding: 0 20px; }
