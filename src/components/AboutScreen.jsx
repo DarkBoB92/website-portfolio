@@ -34,7 +34,7 @@ export default function AboutScreen({ onBack }) {
           </div>
           <div className="about-block">
             <div className="about-block-title">— RECOGNITION —</div>
-            <p>Named in the BIMA 100 Class of 2026 (Student Category) by the British Interactive Media Association, for work shaping the UK's digital industry. University projects nominated for Best Project honours at the Greenwich Shark Expo every year of study, across both individual and team work.</p>
+            <p>Named in the BIMA 100 Class of 2026 (Student Category) by the British Interactive Media Association, for work shaping the UK's digital industry. University projects nominated for Best Project honours at the Greenwich Shark Expo every year of study, across both individual and team work. Awarded the University of Greenwich's Making a Difference Award (2026, School of Computing and Mathematical Sciences) for support to the Games Development programme through outreach, events, and student representation.</p>
          </div>
        </div>
      </div>
