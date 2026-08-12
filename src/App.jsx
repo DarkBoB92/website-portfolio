@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom'
 import Boot from './components/Boot.jsx'
 import HomeScreen from './components/HomeScreen.jsx'
 import AboutScreen from './components/AboutScreen.jsx'
@@ -9,13 +10,15 @@ import Crosshair from './components/Crosshair.jsx'
 import Transition from './components/Transition.jsx'
 import { useLaser, playSpark } from './components/laser.jsx'
 import { projects } from './data/projects.js'
+import { projectForSlug, slugForProject } from './utils/slug.js'
 
 export default function App() {
   const [booted, setBooted] = useState(false)
-  const [currentScreen, setCurrentScreen] = useState(null) // null = home
   const [transitioning, setTransitioning] = useState(false)
   const [carouselIndex, setCarouselIndex] = useState(0) // persists across navigation
   const transitionRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   // Global laser system — mounted once here so it's available on every screen,
   // not just Home. Deliberate fires (XMB icons, project cards, carousel arrows)
@@ -41,31 +44,28 @@ export default function App() {
     return () => document.removeEventListener('click', onClick)
   }, [fire])
 
-  /* Run the fade-to-black, swap the screen, fade back.
-     `pushHistory` controls whether we add a browser history entry
-     (true when the user opens a section, false when we're just
-     reacting to the browser back button so we don't double-stack). */
-  const goToScreen = useCallback((screenId, pushHistory = true) => {
+  /* Run the fade-to-black, swap the ROUTE at the midpoint (invisible,
+     same beat as the old screen-swap), fade back. React Router owns
+     history now — no more manual pushState/replaceState/popstate
+     bookkeeping, which also means real URLs, working browser back/
+     forward, and shareable direct links, none of which the old
+     state-only version could do. */
+  const goToPath = useCallback((path) => {
     if (transitioning) return
     setTransitioning(true)
     transitionRef.current?.fadeIn()
     setTimeout(() => {
-      setCurrentScreen(screenId)
-      if (pushHistory) {
-        if (screenId === null) {
-          // returning home — replace so we don't pile up entries
-          window.history.replaceState({ screen: null }, '')
-        } else {
-          window.history.pushState({ screen: screenId }, '')
-        }
-      }
+      navigate(path)
       transitionRef.current?.fadeOut()
       setTimeout(() => setTransitioning(false), 520)
     }, 380)
-  }, [transitioning])
+  }, [transitioning, navigate])
 
-  const navigateTo = useCallback((screenId) => {
-    if (screenId === 'cv') {
+  // destination is whatever XMBRow/Carousel already pass: 'about' | 'skills' |
+  // 'contact' | 'cv' | a numeric project index. Kept as-is so none of those
+  // components needed to change — only the mapping to a real path is new.
+  const navigateTo = useCallback((destination) => {
+    if (destination === 'cv') {
       const link = document.createElement('a')
       link.href = import.meta.env.BASE_URL + 'Roberto-Scialpi-CV.pdf'
       link.download = 'Roberto-Scialpi-CV.pdf'
@@ -74,37 +74,31 @@ export default function App() {
       document.body.removeChild(link)
       return
     }
-    goToScreen(screenId, true)
-  }, [goToScreen])
+    if (typeof destination === 'number') {
+      const project = projects[destination]
+      if (!project) return
+      goToPath(`/projects/${slugForProject(project)}`)
+      return
+    }
+    goToPath(`/${destination}`)
+  }, [goToPath])
 
-  // In-page BACK button: step the browser history back one entry.
-  // This fires popstate, which does the actual transition — keeping
-  // the in-page button and the browser back button perfectly in sync.
+  // In-page "← BACK" button: always home, not "wherever the browser history
+  // happens to say" — a deliberate choice (matches how the PS3 XMB's own
+  // back button always steps up a level, not through arbitrary history).
+  // The browser's own back/forward buttons are untouched and still walk
+  // real history, so the two can legitimately differ — see chat for why.
   const navigateBack = useCallback(() => {
-    if (transitioning) return
-    window.history.back()
-  }, [transitioning])
+    goToPath('/')
+  }, [goToPath])
 
-  /* Listen for browser back/forward. When the user (or our own
-     navigateBack) pops history, transition to whatever screen that
-     entry represents — null means home. */
-  useEffect(() => {
-    const onPop = (e) => {
-      const screen = e.state?.screen ?? null
-      goToScreen(screen, false)
-    }
-    window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
-  }, [goToScreen])
-
-  const renderScreen = () => {
-    if (currentScreen === 'about') return <AboutScreen onBack={navigateBack} />
-    if (currentScreen === 'skills') return <SkillsScreen onBack={navigateBack} />
-    if (currentScreen === 'contact') return <ContactScreen onBack={navigateBack} />
-    if (typeof currentScreen === 'number') {
-      return <ProjectScreen project={projects[currentScreen]} onBack={navigateBack} fire={fire} />
-    }
-    return null
+  if (!booted) {
+    return (
+      <>
+        <Crosshair />
+        <Boot onDone={() => setBooted(true)} />
+      </>
+    )
   }
 
   return (
@@ -112,20 +106,36 @@ export default function App() {
       <Crosshair />
       {LaserElements}
       <Transition ref={transitionRef} />
-      {!booted && <Boot onDone={() => setBooted(true)} />}
-      {booted && (
-        <>
-          {currentScreen === null && (
+      <Routes location={location}>
+        <Route
+          path="/"
+          element={
             <HomeScreen
               onNavigate={navigateTo}
               fire={fire}
               carouselIndex={carouselIndex}
               setCarouselIndex={setCarouselIndex}
             />
-          )}
-          {renderScreen()}
-        </>
-      )}
+          }
+        />
+        <Route path="/about" element={<AboutScreen onBack={navigateBack} />} />
+        <Route path="/skills" element={<SkillsScreen onBack={navigateBack} />} />
+        <Route path="/contact" element={<ContactScreen onBack={navigateBack} />} />
+        <Route
+          path="/projects/:slug"
+          element={<ProjectRoute onBack={navigateBack} fire={fire} />}
+        />
+        {/* Anything unrecognised (a stale/typo'd link) lands safely on
+            home rather than a dead end. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   )
+}
+
+function ProjectRoute({ onBack, fire }) {
+  const { slug } = useParams()
+  const project = projectForSlug(slug)
+  if (!project) return <Navigate to="/" replace />
+  return <ProjectScreen project={project} onBack={onBack} fire={fire} />
 }
