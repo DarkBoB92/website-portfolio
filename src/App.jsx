@@ -20,6 +20,46 @@ export default function App() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  // The actual URL (from useLocation) and what's currently ON SCREEN are kept
+  // separate on purpose. `location` can change instantly and outside our
+  // control — the browser's own back/forward buttons update it directly via
+  // React Router's history listener, with no warning and no way to intercept
+  // it beforehand the way a click handler can. So instead of triggering the
+  // fade from the thing that caused the navigation (which back/forward
+  // bypasses entirely), it's triggered from the URL change itself: whenever
+  // `location` no longer matches `displayedLocation`, fade out, THEN catch
+  // displayedLocation up to it, THEN fade in. Every navigation path — card
+  // clicks, the in-page back button, and the browser's own buttons — ends up
+  // going through this one place, so all of them get the same fade.
+  const [displayedLocation, setDisplayedLocation] = useState(location)
+  const hasMountedRef = useRef(false)
+  const transitionToken = useRef(0)
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+    if (location.pathname === displayedLocation.pathname) return
+
+    // Tokened rather than boolean-guarded: if the user mashes the browser
+    // back button rapidly, each press supersedes the last rather than
+    // stacking or getting stuck on a stale mid-fade target.
+    const myToken = ++transitionToken.current
+    setTransitioning(true)
+    transitionRef.current?.fadeIn()
+    const t1 = setTimeout(() => {
+      if (transitionToken.current !== myToken) return
+      setDisplayedLocation(location)
+      transitionRef.current?.fadeOut()
+      const t2 = setTimeout(() => {
+        if (transitionToken.current === myToken) setTransitioning(false)
+      }, 520)
+      return () => clearTimeout(t2)
+    }, 380)
+    return () => clearTimeout(t1)
+  }, [location, displayedLocation])
+
   // Global laser system — mounted once here so it's available on every screen,
   // not just Home. Deliberate fires (XMB icons, project cards, carousel arrows)
   // call `fire` directly with a real travel distance from cursor to target.
@@ -44,21 +84,11 @@ export default function App() {
     return () => document.removeEventListener('click', onClick)
   }, [fire])
 
-  /* Run the fade-to-black, swap the ROUTE at the midpoint (invisible,
-     same beat as the old screen-swap), fade back. React Router owns
-     history now — no more manual pushState/replaceState/popstate
-     bookkeeping, which also means real URLs, working browser back/
-     forward, and shareable direct links, none of which the old
-     state-only version could do. */
+  // Click-initiated navigation just changes the URL — the effect above
+  // handles the actual fade, uniformly with browser back/forward.
   const goToPath = useCallback((path) => {
     if (transitioning) return
-    setTransitioning(true)
-    transitionRef.current?.fadeIn()
-    setTimeout(() => {
-      navigate(path)
-      transitionRef.current?.fadeOut()
-      setTimeout(() => setTransitioning(false), 520)
-    }, 380)
+    navigate(path)
   }, [transitioning, navigate])
 
   // destination is whatever XMBRow/Carousel already pass: 'about' | 'skills' |
@@ -106,7 +136,7 @@ export default function App() {
       <Crosshair />
       {LaserElements}
       <Transition ref={transitionRef} />
-      <Routes location={location}>
+      <Routes location={displayedLocation}>
         <Route
           path="/"
           element={
